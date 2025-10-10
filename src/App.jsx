@@ -1,28 +1,19 @@
-import { useState } from 'react';
+import React from 'react'
+import { HashRouter } from "react-router-dom";
+import RoutesConfig from "./RouterConfig";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import Mainpage from './components/Mainpage';
-import Loginpage from './components/Loginpage';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Adminpage from './admin/Adminpage';
 
 function App() {
-
-
-
-  return (   
-    <> 
-    <Header/>
-    <BrowserRouter>
-      <Routes>
-         <Route path="/" element={<Loginpage />} /> 
-        <Route path="/mainpage" element={<Mainpage/>} />
-       <Route path="/adminpage" element = {<Adminpage/>}/>
-      </Routes>
-    </BrowserRouter>
-    </> 
+  return (
+    <>
+      <HashRouter>
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <RoutesConfig />
+        </React.Suspense>
+      </HashRouter>
+    </>
   );
 }
 

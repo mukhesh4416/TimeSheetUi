@@ -1,68 +1,56 @@
 import React from "react";
 import "./Sidebar.css"
+import { Link } from "react-router-dom";
 
 
-const Sidebar = ({onNavigate}) => {
+const Sidebar = () => {
   return (
-    <div className=" pt-3 col-2 bg-light text-black p-3 shadow rounded d-flex flex-column justify-content-between min-vh-100 sticky-top">
+      <div className="pt-3 col-2 bg-light text-black p-3 shadow rounded d-flex flex-column justify-content-between min-vh-100 sticky-top">
       <div>
         <div className="mb-4 justify-content-center">
-          {/* <h5><i className="bi bi-clock-history text-danger p-3"></i> Time Tracker</h5> */}
-        </div>
-        <nav className="nav flex-column sticky-top rounded">
-          <button className="nav-link text-primary text-start btn btn-link mt-4" onClick={() => onNavigate("dashboard")}>
-           <i className="bi bi-grid-3x3 text-primary fw-bold p-2" ></i>  Dashboard
+        </div> 
+        <nav className="nav flex-column rounded">
+          <button className="nav-link text-black text-start btn btn-link" onClick={() => onNavigate("dashboard")}>
+           <i className="bi bi-grid-3x3 text-primary p-2" ></i>  Dashboard
           </button>
 
           <button
-            className="nav-link text-primary text-start btn btn-link "
-          
-             onClick={() => onNavigate("taskestimation")}
+            className="nav-link text-black text-start btn btn-link"
+            data-bs-toggle="collapse"
+            data-bs-target="#registrationMenu"
           >
-            <i className="bi bi-r-square text-primary p-2"></i> Time Estimations
+            <i className="bi bi-r-square text-primary p-2"></i> Registration
           </button>
-          {/* <div className="collapse" id="registrationMenu">
-            <button className="nav-link text-white btn btn-link ms-5">
-              • 
+          <div className="collapse" id="registrationMenu">
+            <button className="nav-link text-black btn btn-link ms-4" onClick={() => onNavigate("userRegistration")}>
+              • User Registration
             </button>
-            <button className="nav-link text-white btn btn-link ms-5">
-              • 
+            <button className="nav-link text-black btn btn-link ms-4" onClick={() => onNavigate("roleRegistration")}>
+              • Role Registration
             </button>
-          </div> */}
+             <button className="nav-link text-black btn btn-link ms-4" onClick={() => onNavigate("designationRegistration")}>
+              • Designation Registration
+            </button>
+            <button className="nav-link text-black btn btn-link ms-4">
+               <Link className='mx-2 nav-link' to={'/timesheet/department'}> Department </Link>
+            </button>
+           
+          </div>
 
           <button
-            className="nav-link text-primary text-start btn btn-link "
-            onClick={() => onNavigate("allocations")}
+            className="nav-link text-black text-start btn btn-link"
+            data-bs-toggle="collapse"
+            data-bs-target="#allocationMenu"
           >
-            <i className="bi bi-kanban text-primary p-2 "></i> Allocations
+            <i className="bi bi-kanban text-primary p-2 "></i> Allocation
           </button>
-          {/* <div className="collapse" id="allocationMenu">
-            <button className="nav-link text-white btn btn-link ms-5">• </button>
-            <button className="nav-link text-white btn btn-link ms-5">• </button>
-          </div> */}
-           <button
-            className="nav-link text-primary text-start btn btn-link mb-5"
-            onClick={() => onNavigate("finalsubmission")}
-          >
-            <i className="bi bi-kanban text-primary p-2 "></i> Timesheet
-          </button>
-          <button
-            className="nav-link text-primary text-start btn btn-link mb-5"
-            onClick={() => onNavigate("timesheet")}
-          >
-            <i className="bi bi-kanban text-primary p-2 "></i> Timesheet
-          </button>
-          {/* <div className="collapse" id="allocationMenu">
-            <button className="nav-link text-white btn btn-link ms-5">• </button>
-            <button className="nav-link text-white btn btn-link ms-5">• </button>
-          </div> */}
+          <div className="collapse" id="allocationMenu">
+            <button className="nav-link text-black btn btn-link ms-5" onClick={() => onNavigate("projectRegistration")}>• Project Allocation</button>
+            <button className="nav-link text-black btn btn-link ms-5" onClick={() => onNavigate("timeAllocation")}>• Time Allocation</button>
+          </div>
         </nav>
+        </div>
       </div>
-
-      {/* <div className="pt-3 p-3">
-        <button className="btn btn-outline-primary w-90 shadow"><i className="bi bi-box-arrow-right p-2"></i>Logout</button>
-      </div> */}
-    </div>
   );
 };
 
