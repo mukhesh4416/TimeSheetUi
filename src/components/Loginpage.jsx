@@ -28,7 +28,15 @@ const formik = useFormik(
   }});
 
   const userLogin = async(values)=>{
-        const res = await axios.post( baseUrl + `user/userLogin?empCode=${values.email}&password=${values.password}`,{})
+
+
+    const obj={
+        
+  "empCode": values.email,
+  "password": values.password
+
+    }
+        const res = await axios.post( baseUrl + `http://10.100.72.140:8080/user/userLogin`,obj)
         if(res.data){
 
             navigate('/adminpage');

@@ -2,18 +2,19 @@ import axios from "axios";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { TypeH1 } from "react-bootstrap-icons";
+import { baseUrl } from "../shared/global";
 
-function Department() {
-  const [department, setDepartment] = useState([]);
+function Project() {
+  const [projectList, setProjectList] = useState([]);
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const handleClick = async (department) => {
+  const handleClick = async (projectList) => {
 
   //  formik.formReset();
     formik.setValues({
-      id: department?.departmentId,
-      department: department?.departmentName,
+      id: projectList?.projectId,
+      project: projectList?.projectName,
     });
     setEditFlag(true);
     setShowModal(true);
@@ -23,36 +24,34 @@ function Department() {
 
   const handleDelete = async (ad) => {
     const res = await axios.delete(
-      `http://10.100.72.140:8080/user/globalDelete?actionMode=${"Department"}&id=${ad.departmentId}`
+      `http://10.100.72.140:8080/user/globalDelete?actionMode=${"Project"}&id=${ad.departmentId}`
     );
 
-    departmentList();
+    projectList();
       
   };
 
   const formik = useFormik({
     initialValues: {
       id: "",
-      department: "",
+      project: "",
     },
     onSubmit: (values) => {
-      saveDepartment(values);
+      saveProject(values);
     },
   });
 
-  const saveDepartment = async (values) => {
+  const saveProject = async (values) => {
     const obj = {
-      departmentName: values.department,
+      projectName: values.project,
       createdBy: values.createdBy,
       actionMode: editFlag ? "update" : "insert",
-      departmentId: values.id,
+      projectId: values.id,
     };
     const res = await axios.post(
-      `http://10.100.72.140:8080/user/saveDepartment`,
-      obj
-    );
+      baseUrl+`user/saveProject`,obj);
     if (res.data) {
-      departmentList();
+      getprojectList();
       setShowModal(false);
       alert(`Data ${editFlag ? "Updated" : "Saved"} successfully`);
     } else {
@@ -60,52 +59,51 @@ function Department() {
     }
   };
 
-  const addDepartment = () => {
-    // formik.formReset();
+  const addProject = () => {
     setShowModal(true);
   };
-  const departmentList = async () => {
+  const getprojectList = async () => {
     const res = await axios.get(
-      `http://10.100.72.140:8080/user/getAllDepartments`
+      baseUrl + `user/getAllProjects`
     );
-    setDepartment(res.data);
+    setProjectList(res.data);
   };
 
   useEffect(() => {
-    departmentList();
+    getprojectList();
   }, []);
 
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3 p-3 mt-5">
-        <h3>Department Registration</h3>
+        <h3>Project Registration</h3>
         <button
           className="btn btn-outline-primary w-90 shadow "
           data-bs-toggle="modal"
           data-bs-target="#myModal"
-          onClick={()=>addDepartment()}
+          onClick={()=>addProject()}
         >
-          <i className="bi bi-plus-circle p-2 "></i> Add New Department
+          <i className="bi bi-plus-circle p-2 "></i> Add New Project
         </button>
       </div>
       <table className="table table-bordered table-hover shadow">
         <thead className="table-light">
           <tr>
             <th>ID</th>
-            <th>Department</th>
+            <th>Project</th>
             <th>Createdby</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {department.map((item) => (
-            <tr key={item.departmentId}>
-              <td>{item.departmentId}</td>
-              <td>{item.departmentName}</td>
-              <td>{item.createdBy}</td>
+          {projectList.map((project) => (
+            <tr key={project.projectId}>
+              <td>{project.projectId}</td>
+              <td>{project.projectName}</td>
+              <td>{project.createdBy}</td>
               <td>
-                <button onClick={() => handleClick(item)}>Edit</button>
-                <button onClick={() => handleDelete(item)}>Delete</button>
+                <button onClick={() => handleClick(project)}>Edit</button>
+                <button onClick={() => handleDelete(project)}>Delete</button>
               </td>
             </tr>
           ))}
@@ -122,24 +120,13 @@ function Department() {
           <div className="modal-dialog modal-lg">
             <div className="modal-content shadow">
               <div className="modal-header">
-                <h3 className="p-3">Add New Department</h3>
+                <h3 className="p-3">Add New Project</h3>
               </div>
               <div className="modal-body">
                 <form onSubmit={formik.handleSubmit}>
-                  {/* <div className="mb-3 p-3">
-                    <label className="form-label ">Id</label>
-                    <input
-                      type="text"
-                      id="id"
-                      name="id"
-                      className="form-control shadow "
-                      onChange={formik.handleChange}
-                      value={formik.values.id}
-                      required
-                    />
-                  </div> */}
+               
                   <div className="mb-3 p-3">
-                    <label className="form-label ">Department</label>
+                    <label className="form-label ">Project</label>
                     <input
                       type="text"
                       id="department"
@@ -177,4 +164,4 @@ function Department() {
   );
 }
 
-export default Department;
+export default Project;
