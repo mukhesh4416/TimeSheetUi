@@ -10,11 +10,15 @@ function Timesheet() {
                 <Header />
             </header>
             <main>
-                <div>
+                {/* <div>
                     <Sidebar/>
                 </div>
                 <div>
                     <Outlet/>
+                </div> */}
+                <div className="row">
+                    <Sidebar/>
+                    <div className="col-md-10 p-4 bg-white "><Outlet/></div>
                 </div>
             </main>
         </div>
