@@ -1,27 +1,22 @@
 import React from 'react'
-import Header from './Header'
-import Sidebar from './Sidebar'
 import { Outlet } from 'react-router-dom'
+import MainHeader from './MainHeader'
 
 function Timesheet() {
     return (
-        <div>
-            <header>
-                <Header />
-            </header>
-            <main>
-                {/* <div>
-                    <Sidebar/>
-                </div>
+        <main>
+            <section>
+                <header>
+                    <MainHeader />
+                </header>
                 <div>
-                    <Outlet/>
-                </div> */}
-                <div className="row">
-                    <Sidebar/>
-                    <div className="col-md-10 p-4 bg-white "><Outlet/></div>
+                    <Outlet />
                 </div>
-            </main>
-        </div>
+                <footer>
+                    
+                </footer>
+            </section>
+        </main>
     )
 }
 
