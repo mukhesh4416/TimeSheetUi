@@ -30,18 +30,38 @@ body {
 
 /* Dialog CSS starts */
 /* header */
-.css-rvoa5x-MuiTypography-root-MuiDialogTitle-root {
+.MuiDialogTitle-root {
   border-bottom: 2px solid #cecdcd;
 }
 
 /* body  */
-.css-15fu35s-MuiDialogActions-root {
+.MuiDialogContent-root {
   padding: 15px 15px !important;
 }
 
 /* footer */
-.css-15fu35s-MuiDialogActions-root {
-  border-top: 2px solid #e1e1e1;
+.MuiDialogActions-root {
+  border-top: 2px solid #e1e1e1 ;
 }
 
 /* Dialog CSS ends */
+
+/* Swal Css Starts */
+.swal2-container {
+  z-index: 9999 !important;
+}
+.swal2-popup{
+  width: 350px;
+}
+.swal2-title{
+  font-size: 25px;
+}
+/* Swal Css Starts */
+
+.globalFilter input{
+  height: 15px;
+  width: 150px;
+}
+.globalFilter label{
+  line-height: 1;
+}

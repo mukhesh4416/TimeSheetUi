@@ -8,8 +8,9 @@ import {
   Menu,
   MenuItem
 } from '@mui/material';
-// import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAlarmClock } from '@fortawesome/free-solid-svg-icons';
 
 function MainHeader() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,21 +26,14 @@ function MainHeader() {
   return (
     <AppBar position="static" color="primary">
       <Toolbar sx={{ minHeight: '48px !important' }}>
-        {/* Left icon (e.g., menu button for mobile) */}
-        <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-          {/* <MenuIcon /> */}
+        <IconButton edge="start" color="inherit" aria-label="menu" >
+          <FontAwesomeIcon icon={faAlarmClock} size="small" />
         </IconButton>
-
-        {/* Title / Branding */}
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Time Sheet
         </Typography>
-
-        {/* Right-side navigation */}
-        <Link className="text-light" to="/timesheet/home">
-          <Button color="inherit">Home</Button>
-        </Link>
-        
+        <Button component={Link} to="/timesheet/home" color='white'>Home</Button>
+        <Button component={Link} to="/timesheet/day-plan" color='white'>Day Plan</Button>
         <Button color="inherit" onClick={handleMenuClick}>
           Registration
         </Button>
@@ -54,7 +48,7 @@ function MainHeader() {
           <MenuItem onClick={handleClose} component={Link} to="/timesheet/department">
             Department
           </MenuItem>
-           <MenuItem onClick={handleClose} component={Link} to="/timesheet/designation">
+          <MenuItem onClick={handleClose} component={Link} to="/timesheet/designation">
             Designation
           </MenuItem>
            <MenuItem onClick={handleClose} component={Link} to="/timesheet/projects">

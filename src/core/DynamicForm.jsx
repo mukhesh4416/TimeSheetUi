@@ -1,4 +1,5 @@
 import { TextField } from '@mui/material'
+import { ErrorMessage } from 'formik';
 import React from 'react'
 
 function DynamicForm({formTemplate, formFormik}) {
@@ -20,8 +21,12 @@ function DynamicForm({formTemplate, formFormik}) {
               value={formFormik.values[fieldConfig.field]}
               fullWidth
               size="medium"
-              error={formFormik.touched[fieldConfig.field] && Boolean(formFormik.errors[fieldConfig.field])}
-              helperText={formFormik.touched[fieldConfig.field] && formFormik.errors[fieldConfig.field]}
+               error={
+                Boolean(formFormik.touched[fieldConfig.field] && formFormik.errors[fieldConfig.field])
+              }
+              helperText={
+                formFormik.touched[fieldConfig.field] && formFormik.errors[fieldConfig.field]
+              }
             />
           </div>
         )

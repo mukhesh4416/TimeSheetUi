@@ -6,6 +6,7 @@ import UserRegistration from './components/registrations/UserRegistration'
 import Projects from './components/registrations/Projects'
 import Designation from './components/registrations/Designation'
 import Department from './components/registrations/Department'
+import Dayplan from './components/Dayplan'
 
 function RouterConfig() {
   return (
@@ -13,6 +14,7 @@ function RouterConfig() {
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/timesheet" element={<Timesheet/>}>
+            <Route path="day-plan" element={<Dayplan/>} />
             <Route path="department" element={<Department/>} />
             <Route path="designation" element={<Designation/>} />
             <Route path="projects" element={<Projects/>} />
