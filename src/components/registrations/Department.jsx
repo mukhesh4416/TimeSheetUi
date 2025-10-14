@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import DynamicForm from "../../core/DynamicForm";
 import { baseUrl } from "../../shared/global";
@@ -21,9 +20,14 @@ import CoreValidations from "../../core/CoreValidations";
 import * as yup from 'yup';
 import Swal from "sweetalert2";
 import { GlobalConfirmation } from "../../core/GlobalConfirmation";
+import userService from "../../shared/services/UserService";
+import { useDeleteApiCallMutation, useGetApiCallQuery, usePostApiCallMutation } from "../../core/store/globalApi";
 
 function Department() {
-  const [departmentList, setDepartmentList] = useState([]);
+
+  const {data:departmentList,refetch:fetchDepartments} = useGetApiCallQuery(userService.get.getAllDepartments);
+  const [ postAPi ] = usePostApiCallMutation();
+  const [ deleteApi ] = useDeleteApiCallMutation();
   const [exceptName, setExceptName] = useState(false);
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -67,6 +71,7 @@ function Department() {
 
   const addDepartment = () => {
     setExceptName('')
+    setEditFlag(false)
     departmentFormik.resetForm();
     setShowModal(true);
   };
@@ -87,8 +92,8 @@ function Department() {
       confirmButtonText:"Delete",
       successMsg:"Deleted",
        onConfirm: async () => {
-        await axios.delete(baseUrl + `user/globalDelete?actionMode=${'Department'}&id=${data.departmentId}`);
-        getDepartmentData();
+        await deleteApi({ url:userService.delete.globalDelete, data:{actionMode:'Department',id:data.departmentId}})
+        fetchDepartments();
         setShowModal(false);
       },
     });
@@ -112,9 +117,9 @@ function Department() {
       confirmButtonText:editFlag ? "Update" : "Save",
       successMsg:editFlag ? 'Updated' :'Saved',
       onConfirm: async () => {
-          const res = await axios.post(baseUrl + `user/saveDepartment`, payload);
+          const res = await postAPi({ url:userService.post.saveDepartment, data:payload})
           if (res.data) {
-            getDepartmentData();
+            fetchDepartments();
             setShowModal(false);
             Swal.fire( editFlag ? 'Updated!' :'Saved!', `Department ${editFlag ? 'Updated' :'Saved'} Successfully`, 'success');
           }
@@ -123,20 +128,11 @@ function Department() {
     }
   };
 
-  const getDepartmentData = async () => {
-    const res = await axios.get(baseUrl + `user/getAllDepartments`);
-    setDepartmentList(res.data);
-  };
-
-  useEffect(() => {
-    getDepartmentData();
-  }, []);
-
   return (
     <>
       <Grid container spacing={2} sx={{ p: 1, alignItems: "center" }}>
         <Grid item size={6}>
-          <Typography variant="h6">Department Registration</Typography>
+          <Typography variant="h6">Department List</Typography>
         </Grid>
         <Grid item size={6} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
           <CoreButton onClick={addDepartment}>Add Department</CoreButton>
@@ -147,7 +143,7 @@ function Department() {
         <AgGridDataTable dtOptions={dtOptions} data={departmentList} filterInput={filterText} />
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
-        <DialogTitle>{editFlag ? "Edit Department" : "Add New Department"}</DialogTitle>
+        <DialogTitle>{editFlag ? "Edit Department" : "Add Department"}</DialogTitle>
         <DialogContent>
           <form onSubmit={departmentFormik.handleSubmit} id="department-form">
             <DynamicForm formTemplate={departmentForm} formFormik={departmentFormik} />
