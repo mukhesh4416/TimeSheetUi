@@ -1,0 +1,22 @@
+@use './variable.scss' as *;
+
+/* Dialog CSS starts */
+/* header */
+.MuiDialogTitle-root {
+  background-color: $header-color;
+  border-bottom: 2px solid #a0aab8;
+}
+
+/* body  */
+.MuiDialogContent-root {
+  padding: 15px 15px !important;
+  background-color: $body-color;
+}
+
+/* footer */
+.MuiDialogActions-root {
+  border-top: 2px solid #a0aab8 ;
+  background-color: $header-color;
+}
+
+/* Dialog CSS ends */

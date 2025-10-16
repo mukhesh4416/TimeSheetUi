@@ -31,7 +31,7 @@ function Department() {
   const [exceptName, setExceptName] = useState(false);
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [filterText, setFilterText] = useState(false);
+  const [filterText, setFilterText] = useState();
   const userData = JSON.parse(sessionStorage.getItem("userData"))
 
   const coreValidations = new CoreValidations()
@@ -130,7 +130,7 @@ function Department() {
 
   return (
     <>
-      <Grid container spacing={2} sx={{ p: 1, alignItems: "center" }}>
+      <Grid container spacing={2} sx={{ p:1,px:2, alignItems: "center" }}>
         <Grid item size={6}>
           <Typography variant="h6">Department List</Typography>
         </Grid>
@@ -139,7 +139,7 @@ function Department() {
           <GlobalFilter onFilterChange={setFilterText} />
         </Grid>
       </Grid>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ px:2 }}>
         <AgGridDataTable dtOptions={dtOptions} data={departmentList} filterInput={filterText} />
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>

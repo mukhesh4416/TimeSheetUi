@@ -8,7 +8,8 @@ const userService = {
         "getAllDepartments": url + 'getAllDepartments',
         "getAllDesignations": url + 'getAllDesignations',
         "getAllProjects": url + 'getAllProjects',
-        "getAllUsersList": url + 'getAllUsersList'
+        "getAllUsersList": url + 'getAllUsersList',
+        "getUserList": url + 'getUserList'
     },
 
     delete: {

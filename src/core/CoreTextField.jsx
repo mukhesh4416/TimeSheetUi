@@ -1,7 +1,7 @@
 import { TextField } from '@mui/material'
 import React from 'react'
 
-function CoreTextField({field,label,formFormik}) {
+function CoreTextField({field,label,formFormik,multiline=false,rowCols=2}) {
   return (
     <TextField
       // sx={{my:1}}
@@ -13,7 +13,9 @@ function CoreTextField({field,label,formFormik}) {
       onBlur={formFormik.handleBlur}
       value={formFormik.values[field]}
       fullWidth
-      size="medium"
+      multiline={multiline}
+      rows={rowCols}
+      size="small"
        error={
         Boolean(formFormik.touched[field] && formFormik.errors[field])
       }

@@ -11,7 +11,7 @@ function DynamicForm({ formTemplate, formFormik, size=12 }) {
   const formInputTemplate = (fieldConfig) => {
     switch (fieldConfig.type) {
       case "Text":
-        return <CoreTextField field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} />
+        return <CoreTextField field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} multiline={fieldConfig?.multiline}/>
 
       case "Number":
         return <CoreTextField field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} />

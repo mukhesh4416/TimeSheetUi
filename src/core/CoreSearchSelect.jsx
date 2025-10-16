@@ -27,6 +27,7 @@ function CoreSearchSelect({
       isOptionEqualToValue={(option, value) =>
         option[valueName] === value[valueName]
       }
+      size={'small'}
       getOptionLabel={(option) => option[keyName] || ''}
       onBlur={formFormik.handleBlur}
       renderInput={(params) => (

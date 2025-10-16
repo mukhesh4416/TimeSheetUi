@@ -2,7 +2,9 @@
 
 import React, { useMemo, useState, useRef, useCallback, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
-import "./AgGridDataTable.css";
+import "./AgGridDataTable.scss";
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 import {
   ClientSideRowModelModule,
@@ -10,7 +12,7 @@ import {
   PaginationModule,
   TextFilterModule,
   NumberFilterModule,
-  QuickFilterModule, // ✅ must be registered
+  QuickFilterModule,
 } from "ag-grid-community";
 
 // ✅ Register required modules
@@ -63,7 +65,9 @@ const AgGridDataTable = ({dtOptions,data = [],filterInput=""}) => {
             columnDefs={dtOptions?.columnDefs}
             defaultColDef={defaultColDef}
             pagination={true}
-            rowModelType="clientSide" // ✅ Important for Quick Filter
+            rowModelType="clientSide"
+            headerHeight={40} 
+            rowHeight={35}  
           />
         </div>
       </div>

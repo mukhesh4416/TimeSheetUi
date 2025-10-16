@@ -24,27 +24,9 @@ body #root main,
 } */
 
 body {
-  background-color: #f7f8f9 !important;
+  background-color: #d6dcffb0 !important;
   font-family: var(--bs-body-font-family) !important;
 }
-
-/* Dialog CSS starts */
-/* header */
-.MuiDialogTitle-root {
-  border-bottom: 2px solid #cecdcd;
-}
-
-/* body  */
-.MuiDialogContent-root {
-  padding: 15px 15px !important;
-}
-
-/* footer */
-.MuiDialogActions-root {
-  border-top: 2px solid #e1e1e1 ;
-}
-
-/* Dialog CSS ends */
 
 /* Swal Css Starts */
 .swal2-container {
