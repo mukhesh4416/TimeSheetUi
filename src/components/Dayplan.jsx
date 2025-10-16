@@ -14,8 +14,10 @@ import userService from '../shared/services/UserService';
 import CoreDatePicker from '../core/coreDatePicker';
 
 function Dayplan() {
+  const userData = JSON.parse(sessionStorage.getItem("userData"))
 
   const {data:projectList} = useGetApiCallQuery(userService.get.getAllProjects);
+  const {data:downTeamList} = useGetApiCallQuery(`${userService.get.getDownTeamList}+${userData?.uid}`);
   const {data:usersList} = useGetApiCallQuery(userService.get.getUserList);
   const [paramsApi] = useParamsApiCallMutation();
   const [postAPi] = usePostApiCallMutation();
@@ -24,7 +26,6 @@ function Dayplan() {
   const [filterText, setFilterText] = useState();
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const userData = JSON.parse(sessionStorage.getItem("userData"))
 
   const coreValidations = new CoreValidations()
   const dayPlanValidations = yup.object().shape({
@@ -53,6 +54,15 @@ function Dayplan() {
       },
     ]
   }
+
+  const userFormik = useFormik({
+      initialValues: {
+        uid: userData?.uid,
+      },
+    });
+  const userForm = [
+    { field: "uId", label: "Employee Name", type: "SearchSelect", options:downTeamList, keyName:"profileName", valueName:"uid" }
+  ]
 
   const dayplanForm = [
     { field: "taskName", label: "Task Name", type: "Text" },
@@ -142,10 +152,15 @@ function Dayplan() {
   return (
     <>
       <Grid container spacing={2} sx={{ p: 1, alignItems: "center" }}>
-        <Grid item size={6}>
+        <Grid item size={5}>
           <Typography variant="h6">Day Plan</Typography>
         </Grid>
-        <Grid item size={6} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+        <Grid item size={2}>
+          <form id="user-form">
+            <DynamicForm formTemplate={userForm} formFormik={userFormik} />
+          </form>
+        </Grid>
+        <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
           <CoreButton onClick={addDayPlan}>Add Dayplan</CoreButton>
           <GlobalFilter onFilterChange={setFilterText} />
           <CoreDatePicker/>

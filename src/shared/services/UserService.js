@@ -9,7 +9,8 @@ const userService = {
         "getAllDesignations": url + 'getAllDesignations',
         "getAllProjects": url + 'getAllProjects',
         "getAllUsersList": url + 'getAllUsersList',
-        "getUserList": url + 'getUserList'
+        "getUserList": url + 'getUserList',
+        "getDownTeamList": url + 'getDownTeamList?uid='
     },
 
     delete: {
