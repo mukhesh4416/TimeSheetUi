@@ -11,11 +11,11 @@ import AgGridDataTable from '../shared/agGrid/AgGridDataTable';
 import GlobalFilter from '../core/GlobalFilter';
 import DynamicForm from '../core/DynamicForm';
 import userService from '../shared/services/UserService';
+import { GlobalConfirmation } from '../core/GlobalConfirmation';
 import CoreDatePicker from '../core/coreDatePicker';
 
-function Dayplan() {
+function Tasks() {
   const userData = JSON.parse(sessionStorage.getItem("userData"));
-  const [newData,setNewData] = useState(userData);
   
 
   const {data:projectList} = useGetApiCallQuery(userService.get.getAllProjects);
@@ -25,37 +25,29 @@ function Dayplan() {
   const [postAPi] = usePostApiCallMutation();
   
 
-  const [dayPlanList, setDayPlanList] = useState([])
+  const [taskList, setTaskList] = useState([])
   const [filterText, setFilterText] = useState();
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-//  function addData(){
-
-//  setNewData(prevData => ({
-//       ...prevData, downTeamList, 
-//     }));
-//     console.log(downTeamList);
-//     console.log(newData)
-
-//  }
-
-//  addData();
 
   const coreValidations = new CoreValidations()
   const dayPlanValidations = yup.object().shape({
     taskName: coreValidations.stringValidation(2, 50),
   });
 
+
+  const taskValidations = yup.object().shape({
+    taskName:coreValidations.stringValidation(2,50),
+  });
+
   const dtOptions = {
     columnDefs: [
       { field: "taskName", headerName: "Task Name" },
-       { field: "taskHours", headerName: "Task Hours" },
       { field: "projectName", headerName: "Project Name" },
-      { field: "taskDescription", headerName: "Description" },
-      { field: "assignedBy", headerName: "Assigned By" },
-      { field: "startTime", headerName: "Start Date Time" },
-      { field: "endTime", headerName: "End Date Time" },
+      { field: "assignedTo", headerName: "Assigned By" },
+      { field: "taskDescription", headerName: "Task Description" },
+      { field: "taskHours", headerName: "Task Hours" },
       { field: "createdBy", headerName: "Created By" },
       {
         headerName: "Actions",
@@ -63,8 +55,8 @@ function Dayplan() {
         minWidth: 150,
         cellRenderer: (params) => (
           <>
-            <CoreIconButton icon={faEdit} onClick={() => editDayplan(params.data)} />
-            <CoreIconButton icon={faTrashAlt} color="error" onClick={() => deleteDayplan(params.data)} />
+            <CoreIconButton icon={faEdit} onClick={() => editTasks(params.data)} />
+            <CoreIconButton icon={faTrashAlt} color="error" onClick={() => deleteTasks(params.data)} />
           </>
         ),
       },
@@ -80,36 +72,35 @@ function Dayplan() {
     { field: "uId", label: "Employee Name", type: "SearchSelect", options:downTeamList, keyName:"profileName", valueName:"uid" }
   ]
 
-  const dayplanForm = [
+  const TasksForm = [
     { field: "taskName", label: "Task Name", type: "Text" },
     { field: "projectName", label: "Project Name", type: "Text", type: "SearchSelect" , options:projectList, keyName:"projectName", valueName:"projectId" },
-    { field: "assignedBy", label: "Assigned By", type: "SearchSelect", options:usersList, keyName:"profileName", valueName:"uid" },
-    { field: "startTime", label: "Start Time", type: "DateTime" },
-    { field: "endTime", label: "End Time", type: "DateTime" },
+    { field: "assignedTo", label: "Assigned To", type: "SearchSelect", options:usersList, keyName:"profileName", valueName:"uid" },
+    { field: "taskHours", label: "Task Hours", type: "Time" },
     { field: "taskDescription", label: "Description", type: "Text", multiline:true },
   ]
 
-  const dayplanFormik = useFormik({
+  const TasksFormik = useFormik({
     initialValues: {
       taskName: "",
       projectName: "",
-      assignedBy: "",
-      startTime: "",
-      endTime: "",
-      taskDescription: ""
+      assignedTo: "",
+      taskHours: "",
+      taskDescription: "",
+    
     },
-    validationSchema: dayPlanValidations,
+    validationSchema: taskValidations,
   });
 
-  const addDayPlan = () => {
-    dayplanFormik.resetForm();
+  const addTasks = () => {
+    TasksFormik.resetForm();
     setEditFlag(false)
     setShowModal(true)
   }
 
-  const editDayplan = (data) => {
-    dayplanFormik.resetForm();
-    dayplanFormik.setValues({
+  const editTasks = (data) => {
+    TasksFormik.resetForm();
+    TasksFormik.setValues({
       projectName: data.projectName,
       assignedBy: data.assignedBy,
       startTime: data.startTime,
@@ -120,32 +111,38 @@ function Dayplan() {
     setShowModal(true);
   };
 
-    const saveDayplan = async () => {
-    dayplanFormik.validateForm();
-    dayplanFormik.setTouched({
+    const saveTasks = async () => {
+    TasksFormik.validateForm();
+    TasksFormik.setTouched({
     });
-    const formVal = dayplanFormik.values
-    if(dayplanFormik.isValid){
+    const formVal = TasksFormik.values
+    if(TasksFormik.isValid){
       const payload = {
         "createdBy": userData?.profileName,
         "actionMode": editFlag ? "update" : "insert",
+         "taskName": formVal.taskName,
+         "taskDescription": formVal.taskDescription,
+         "projectId": 0,
+         "assignId": 0,
+         "assignName": "string",
+         "hours": formVal.taskHours,
       };
 
       GlobalConfirmation({
       confirmButtonText:editFlag ? "Update" : "Save",
       successMsg:editFlag ? 'Updated' :'Saved',
       onConfirm: async () => {
-          const res = await postAPi({ url:userService.post.saveUser, data:payload})
+          const res = await postAPi({ url:timesheetService.post.saveTask, data:payload})
           if (res.data) {
             setShowModal(false);
-            Swal.fire( editFlag ? 'Updated!' :'Saved!', `Dayplan ${editFlag ? 'Updated' :'Saved'} Successfully`, 'success');
+            Swal.fire( editFlag ? 'Updated!' :'Saved!', `Task ${editFlag ? 'Updated' :'Saved'} Successfully`, 'success');
           }
         },
       });
     }
   };
 
-  const deleteDayplan = (data) => {
+  const deleteTasks = (data) => {
     GlobalConfirmation({
       confirmButtonText: "Delete",
       successMsg: "Deleted",
@@ -156,44 +153,44 @@ function Dayplan() {
     });
   }
 
-  const getDayPlanList = async () => {
+  const getTasksList = async () => {
     const res = await paramsApi({ url: timesheetService.params.getDayPlayByDate, data: { uId: userData?.uId, date: '2026-10-14' } })
-    setDayPlanList(res.data);
+    setTaskList(res.data);
   }
 
   useEffect(() => {
-    getDayPlanList();
+    getTasksList();
   }, [])
 
   return (
     <>
       <Grid container spacing={2} sx={{ p: 1, alignItems: "center" }}>
         <Grid item size={5}>
-          <Typography variant="h6">Time sheet</Typography>
+          <Typography variant="h6">Tasks</Typography>
         </Grid>
         <Grid item size={2}>
-          <form id="user-form">
+          {/* <form id="user-form">
             <DynamicForm formTemplate={userForm} formFormik={userFormik} />
-          </form>
+          </form> */}
         </Grid>
         <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-          <CoreButton onClick={addDayPlan}>Add Timesheet</CoreButton>
+          <CoreButton onClick={addTasks}>Add Task</CoreButton>
           <GlobalFilter onFilterChange={setFilterText} />
-          {/* <CoreDatePicker/> */}
+          
         </Grid>
       </Grid>
       <Box sx={{ px: 2 }}>
-        <AgGridDataTable dtOptions={dtOptions} data={dayPlanList} filterInput={filterText} />
+        <AgGridDataTable dtOptions={dtOptions} data={taskList} filterInput={filterText} />
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{editFlag ? "Edit Dayplan" : "Add Dayplan"}</DialogTitle>
+        <DialogTitle>{editFlag ? "Edit Task" : "Add Task"}</DialogTitle>
         <DialogContent>
-          <form onSubmit={dayplanFormik.handleSubmit} id="dayplan-form">
-            <DynamicForm formTemplate={dayplanForm} formFormik={dayplanFormik} size={4} />
+          <form onSubmit={TasksFormik.handleSubmit} id="dayplan-form">
+            <DynamicForm formTemplate={TasksForm} formFormik={TasksFormik} size={4} />
           </form>
         </DialogContent>
         <DialogActions>
-          <CoreButton onClick={saveDayplan}>{editFlag ? "Update" : "Save"}</CoreButton>
+          <CoreButton onClick={saveTasks}>{editFlag ? "Update" : "Save"}</CoreButton>
           <CoreButton color={"secondary"} onClick={() => setShowModal(false)} >Close</CoreButton>
         </DialogActions>
       </Dialog>
@@ -201,4 +198,4 @@ function Dayplan() {
   )
 }
 
-export default Dayplan
+export default Tasks

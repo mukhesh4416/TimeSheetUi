@@ -7,14 +7,19 @@ import Projects from './components/registrations/Projects'
 import Designation from './components/registrations/Designation'
 import Department from './components/registrations/Department'
 import Dayplan from './components/Dayplan'
+import ForgotPassword from './authentications/ForgotPassword'
+import Tasks from './components/Tasks'
 
 function RouterConfig() {
   return (
       <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login />} >
+          <Route path="forgot" element={<ForgotPassword />} />
+          </Route>
           <Route path="/timesheet" element={<Timesheet/>}>
             <Route path="day-plan" element={<Dayplan/>} />
+            <Route path="tasks" element={<Tasks/>} />
             <Route path="department" element={<Department/>} />
             <Route path="designation" element={<Designation/>} />
             <Route path="projects" element={<Projects/>} />

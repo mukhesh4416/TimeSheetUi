@@ -24,7 +24,7 @@ body #root main,
 } */
 
 body {
-  background-color: #d6dcffb0 !important;
+  /* background-color: #d6dcffb0 !important; */
   font-family: var(--bs-body-font-family) !important;
 }
 

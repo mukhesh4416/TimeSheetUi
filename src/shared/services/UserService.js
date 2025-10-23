@@ -5,26 +5,28 @@ const url = baseUrl + 'user/'
 const userService = {
 
     get: {
-        "getAllDepartments": url + 'getAllDepartments',
-        "getAllDesignations": url + 'getAllDesignations',
-        "getAllProjects": url + 'getAllProjects',
+        "getAllDepartments": url + 'getAllDept',
+        "getAllDesignations": url + 'getAllDesig',
+        "getAllProjects": url + 'getAllProj',
         "getAllUsersList": url + 'getAllUsersList',
         "getUserList": url + 'getUserList',
-        "getDownTeamList": url + 'getDownTeamList?uid='
+        "getDownTeamList": url + 'getDownTeamList?uid=',
+
     },
 
     delete: {
-        "globalDelete": url + 'globalDelete?'
+        "globalDelete": url + 'deleteAny'
     },
 
     params: {
     },
 
     post: {
-        "saveDepartment": url + 'saveDepartment',
-        "saveDesignation": url + 'saveDesignation',
+        "saveDepartment": url + 'saveDept',
+        "saveDesignation": url + 'saveDesig',
         "saveProject": url + 'saveProject',
-        "userRegistration": url + 'userRegistration'
+        "userRegistration": url + 'registerUser',
+        
     },
 
 }

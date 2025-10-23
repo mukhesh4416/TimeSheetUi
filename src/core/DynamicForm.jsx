@@ -5,6 +5,9 @@ import CoreTextField from './CoreTextField.jsx';
 import CorePassword from './CorePassword.jsx';
 import CoreSelect from './CoreSelect.jsx';
 import CoreSearchSelect from './CoreSearchSelect.jsx';
+import CoreDateTimePicker from './CoreDateTimePicker.jsx';
+import CoreTimePicker from './CoreTimePicker.jsx';
+
 
 function DynamicForm({ formTemplate, formFormik, size=12 }) {
 
@@ -23,7 +26,12 @@ function DynamicForm({ formTemplate, formFormik, size=12 }) {
         return <CoreSearchSelect field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} options={fieldConfig.options} keyName={fieldConfig.keyName}
           valueName={fieldConfig.valueName}
           getOptionLabel={(option) => option[fieldConfig.valueName] || ''}
+      
         />
+        case "DateTime":
+        return <CoreDateTimePicker field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} />
+        case "Time":
+        return <CoreTimePicker field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} />
       default:
         return null;
     }

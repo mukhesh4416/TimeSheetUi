@@ -24,7 +24,7 @@ function MainHeader() {
   };
 
   return (
-    <AppBar position="static" color="primary">
+    <AppBar position="static" color="#FFA500" sx={{ backgroundColor: '#FFA500' }}>
       <Toolbar sx={{ minHeight: '48px !important' }}>
         <IconButton edge="start" color="inherit" aria-label="menu" >
           <FontAwesomeIcon icon={faAlarmClock} size="small" />
@@ -33,9 +33,10 @@ function MainHeader() {
           Time Sheet
         </Typography>
         <Button component={Link} to="/timesheet/home" color='white'>Home</Button>
-        <Button component={Link} to="/timesheet/day-plan" color='white'>Day Plan</Button>
+        <Button component={Link} to="/timesheet/day-plan" color='white'>TIME SHEET</Button>
+         <Button component={Link} to="/timesheet/tasks" color='white'>Tasks</Button>
         <Button color="inherit" onClick={handleMenuClick}>
-          Registration
+          Configuration
         </Button>
         <Menu
           anchorEl={anchorEl}

@@ -39,12 +39,16 @@ function Projects() {
   });
 
   const projectForm = [
-    { field: "projectName", label: "Project Name", type: "Text" }
+    { field: "projectName", label: "Project Name", type: "Text" },
+     { field: "startDate", label: "Start Date", type: "Date" },
+     { field: "endDate", label: "End Date", type: "Date" }
   ]
 
   const projectFormik = useFormik({
     initialValues: {
       projectName: "",
+      startDate:"",
+      endDate:"",
       projectId: 0
     },
     validationSchema: projectValidations,
@@ -53,6 +57,7 @@ function Projects() {
   const dtOptions = {
     columnDefs: [
       { field: "projectName", headerName: "Project Name", minWidth: 170 },
+      { field: "createdOn", headerName: "Created On" },
       { field: "createdBy", headerName: "Created By" },
       {
         headerName: "Actions",

@@ -75,7 +75,7 @@ function UserRegistration() {
       { field: "phoneNumber", headerName: "Phone Number", minWidth: 170 },
       { field: "departmentName", headerName: "Department", minWidth: 170 },
       { field: "designationName", headerName: "Designation", minWidth: 170 },
-      { field: "reportingLevel", headerName: "Reporting Level", minWidth: 170 },
+      { field: "rlName", headerName: "Reporting Level", minWidth: 170 },
       { field: "createdBy", headerName: "Created By" },
       {
         headerName: "Actions",

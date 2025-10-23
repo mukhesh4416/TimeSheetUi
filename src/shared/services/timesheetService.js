@@ -16,6 +16,7 @@ const timesheetService = {
 
     post: {
         "saveDayPlan": url + 'saveDayPlan',
+        "saveTask": url + 'saveTask',
     },
 
 }
