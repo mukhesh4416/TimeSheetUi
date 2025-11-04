@@ -9,6 +9,14 @@ export const globalApi = createApi({
       query: (url) => `${url}`,
     }),
 
+
+    getApiCallWithParams: builder.query({
+      query: ({ url, params }) => {
+        const queryString = new URLSearchParams(params).toString();
+        return `${url}?${queryString}`;
+      },
+    }),
+
     postApiCall: builder.mutation({
       query: ({ url, data }) => ({
         url: `${url}`,
@@ -56,5 +64,6 @@ export const {
   useGetApiCallQuery,
   usePostApiCallMutation,
   useParamsApiCallMutation,
-  useDeleteApiCallMutation
+  useDeleteApiCallMutation,
+  useGetApiCallWithParamsQuery
 } = globalApi;

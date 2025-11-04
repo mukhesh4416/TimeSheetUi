@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import DynamicForm from "../../core/DynamicForm";
+import dayjs from "dayjs";
 import {
   Dialog,
   DialogTitle,
@@ -24,6 +25,7 @@ import { useDeleteApiCallMutation, useGetApiCallQuery, usePostApiCallMutation } 
 
 function Projects() {
 
+  // const {data:projectList,refetch:fetchProjects} = useGetApiCallQuery(userService.get.getAllProjects);
   const {data:projectList,refetch:fetchProjects} = useGetApiCallQuery(userService.get.getAllProjects);
   const [ postAPi ] = usePostApiCallMutation();
   const [ deleteApi ] = useDeleteApiCallMutation();
@@ -49,15 +51,34 @@ function Projects() {
       projectName: "",
       startDate:"",
       endDate:"",
-      projectId: 0
+      
     },
-    validationSchema: projectValidations,
+    //validationSchema: projectValidations,
   });
 
   const dtOptions = {
     columnDefs: [
       { field: "projectName", headerName: "Project Name", minWidth: 170 },
-      { field: "createdOn", headerName: "Created On" },
+      {
+      field: "startDate",
+      headerName: "Start Date",
+      minWidth: 160,
+      valueGetter: (params) => {
+        const date = params?.data?.startDate || params?.value;
+        return date ? dayjs(date).format("YYYY-MM-DD") : "";
+      },
+    },
+    {
+      field: "endDate",
+      headerName: "End Date",
+      minWidth: 160,
+      valueGetter: (params) => {
+        const date = params?.data?.endDate || params?.value;
+        return date ? dayjs(date).format("YYYY/MM/DD") : "";
+      },
+    },
+    
+      { field: "createdDate", headerName: "Created On" },
       { field: "createdBy", headerName: "Created By" },
       {
         headerName: "Actions",
@@ -85,7 +106,9 @@ function Projects() {
     projectFormik.resetForm();
     projectFormik.setValues({
       projectName: data.projectName,
-      projectId: data.projectId
+      projectId: data.projectId,
+      startDate: data.startDate,
+      endDate: data.endDate,
     })
     setEditFlag(true)
     setShowModal(true);
@@ -96,7 +119,7 @@ function Projects() {
       confirmButtonText:"Delete",
       successMsg:"Deleted",
        onConfirm: async () => {
-        await deleteApi({ url:userService.delete.globalDelete, data:{actionMode:'Project',id:data.projectId}})
+        await deleteApi({ url:userService.delete.deleteProject, data:{projectId:data.projectId}})
         fetchProjects();
         setShowModal(false);
       },
@@ -113,6 +136,8 @@ function Projects() {
       const payload = {
         "projectId": formVal.projectId,
         "projectName": formVal.projectName,
+        "startDate":formVal.startDate,
+        "endDate":formVal.endDate,
         "createdBy": userData?.profileName,
         "actionMode": editFlag ? "update" : "insert",
       };
@@ -121,7 +146,8 @@ function Projects() {
       confirmButtonText:editFlag ? "Update" : "Save",
       successMsg:editFlag ? 'Updated' :'Saved',
       onConfirm: async () => {
-          const res = await postAPi({ url:userService.post.saveProject, data:payload})
+          // const res = await postAPi({ url:userService.post.saveProject, data:payload})
+          const res = await postAPi({ url:"http://10.100.72.249:8080/timeSheet.service/saveProject", data:payload})
           if (res.data) {
             fetchProjects();
             setShowModal(false);
@@ -134,7 +160,7 @@ function Projects() {
 
   return (
     <>
-      <Grid container spacing={2} sx={{ p: 1, alignItems: "center" }}>
+      <Grid container spacing={2} sx={{ p: 1,px:2, alignItems: "center",mt: '68px', ml: '240px', }}>
         <Grid item size={6}>
           <Typography variant="h6">Project List</Typography>
         </Grid>
@@ -143,7 +169,7 @@ function Projects() {
           <GlobalFilter onFilterChange={setFilterText} />
         </Grid>
       </Grid>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2 , ml: '240px'}}>
         <AgGridDataTable dtOptions={dtOptions} data={projectList} filterInput={filterText} />
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
@@ -151,6 +177,7 @@ function Projects() {
         <DialogContent>
           <form onSubmit={projectFormik.handleSubmit} id="project-form">
             <DynamicForm formTemplate={projectForm} formFormik={projectFormik} />
+            
           </form>
         </DialogContent>
         <DialogActions>

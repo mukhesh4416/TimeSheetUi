@@ -1,22 +1,57 @@
 import React from "react";
 import { baseUrl } from "../global";
 
-const url = baseUrl + 'timeSheet/'
+
 const timesheetService = {
 
     get: {
+        "getTaskList": baseUrl + 'getAllTasksList',
+        "getAllTimeSheets" : baseUrl + 'getAllTimeSheetList',
+         "RLtasks" :baseUrl + 'getAllTasksToRL',
+         "ManagerTasks":baseUrl + 'getAllTasksToManager',
+         "getAllApprovedTasksList" : baseUrl + 'getAllApprovedTasksList',
+         "getAllSubmittedTimesheets" : baseUrl + 'getAllSubmittedTimeSheetList',
+         "UserTasks": baseUrl + 'getAllTasksToUser',
+         "ManagerTimesheet": baseUrl + 'getTimeSheetListForManager',
+         "RLTimesheet" : baseUrl + 'getTimeSheetListForRL',
+         "UserTimesheet" : baseUrl + 'getTimeSheetListById',
+        
+
     },
 
     delete: {
+
+        "deleteTask" : baseUrl + 'deleteTask',
+        "deleteTimeSheet" : baseUrl + 'deleteTimeSheet'
     },
 
     params: {
-        "getDayPlayByDate": url + 'getDayPlayByDate?'
+        "getDayPlayByDate": baseUrl + 'getDayPlayByDate?',
+        "submitTask": baseUrl + 'submitTask',
+        "deleteTask" : baseUrl + 'deleteTask',
+        "RLtasks" :baseUrl + 'getAllTasksToRL',
+        "verifyTask":baseUrl + 'verifyTask',
+        "approveTask":baseUrl + 'approveTask',
+        "getAllApprovedTasksList" : baseUrl + 'getAllApprovedTasksList',
+        "submitTimeSheet" : baseUrl + 'submitTimeSheet',
+         "verifyTimesheet":baseUrl + 'verifyTimeSheet',
+         "approveTimesheet" : baseUrl + 'approveTimeSheet',
+          "rejectTaskRL" : baseUrl + 'reVerifyTaskByRL',
+           "rejectTaskManager" : baseUrl + 'reVerifyTaskByManager',
+              "rejectTimesheetRL" : baseUrl + 'reVerifyTimeSheetByRL',
+           "rejectTimesheetManager" : baseUrl + 'reVerifyTimeSheetByManager',
+           
+         
+        
     },
 
     post: {
-        "saveDayPlan": url + 'saveDayPlan',
-        "saveTask": url + 'saveTask',
+        "saveDayPlan": baseUrl + 'saveDayPlan',
+        "saveTask": baseUrl + 'saveTask',
+        "saveTimeSheet" : baseUrl + 'saveTimeSheet',
+        "submitTask" : baseUrl + 'submitTask',
+        "submitTimeSheet" : baseUrl + 'submitTimeSheet',
+        "submitAllTimeSheets" : baseUrl + 'submitTimeSheetsMonthly'
     },
 
 }

@@ -68,6 +68,7 @@ const AgGridDataTable = ({dtOptions,data = [],filterInput=""}) => {
             rowModelType="clientSide"
             headerHeight={40} 
             rowHeight={35}  
+          
           />
         </div>
       </div>

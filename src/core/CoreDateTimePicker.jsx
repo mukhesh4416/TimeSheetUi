@@ -6,19 +6,30 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'; // Optional, used for layout
 import dayjs from 'dayjs';
 
-function CoreDateTimePicker({}) {
- const [value, setValue] = React.useState(dayjs());
+function CoreDateTimePicker({label,formFormik, field}) {
+  const { values, setFieldValue } = formFormik;
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer components={['DatePicker']}>
         <DateTimePicker
-          label="Date"
-          value={value}
-          onChange={(newValue) => setValue(newValue)}
+          label={label}
+           value={values[field] ? dayjs(values[field]) : null}
+                  onChange={(newValue) => {
+                  
+                   setFieldValue(field, newValue ? newValue.format("YYYY-MM-DD HH:mm:ss") : null);}}
+                   
+          // value={value}
+          // onChange={(newValue) => setValue(newValue)}
             slotProps={{
                 textField: {
-                    size: 'small'
+                    size: 'small',
+                     fullWidth: true,
+            error: Boolean(formFormik.touched[field] && formFormik.errors[field]),
+            helperText:
+              formFormik.touched[field] && formFormik.errors[field]
+                ? formFormik.errors[field]
+                : "",
                 },
             }}
             

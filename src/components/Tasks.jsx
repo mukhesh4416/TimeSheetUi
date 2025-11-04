@@ -1,8 +1,10 @@
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { faEdit, faTrashAlt, faPlus, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import timesheetService from '../shared/services/TimesheetService';
-import { useGetApiCallQuery, useParamsApiCallMutation, usePostApiCallMutation } from '../core/store/globalApi';
+import { useGetApiCallQuery, useParamsApiCallMutation, usePostApiCallMutation, useDeleteApiCallMutation,useGetApiCallWithParamsQuery } from '../core/store/globalApi';
 import CoreButton from '../core/CoreButton';
+import CoreIconButton from '../core/CoreIconButton';
 import { useFormik } from 'formik';
 import CoreTextField from '../core/CoreTextField';
 import CoreValidations from '../core/CoreValidations';
@@ -12,54 +14,107 @@ import GlobalFilter from '../core/GlobalFilter';
 import DynamicForm from '../core/DynamicForm';
 import userService from '../shared/services/UserService';
 import { GlobalConfirmation } from '../core/GlobalConfirmation';
-import CoreDatePicker from '../core/coreDatePicker';
+import Swal from "sweetalert2";
+
 
 function Tasks() {
   const userData = JSON.parse(sessionStorage.getItem("userData"));
+
+   const { data: tasksList, refetch:fetchTasks } = useGetApiCallWithParamsQuery({
+  url: timesheetService.get.UserTasks,
+  params: { taskUId: 3 }, 
+});
   
 
   const {data:projectList} = useGetApiCallQuery(userService.get.getAllProjects);
+   const {data:rlList} = useGetApiCallQuery("http://10.100.72.249:8080/timeSheet.service/getAllRLList");
   const {data:downTeamList} = useGetApiCallQuery(`${userService.get.getDownTeamList}+${userData?.uid}`);
-  const {data:usersList} = useGetApiCallQuery(userService.get.getUserList);
+  const {data:usersList} = useGetApiCallQuery(userService.get.getAllUsersList);
+  //const {data:tasksList,refetch:fetchTasks} = useGetApiCallQuery(timesheetService.get.getTaskList);
+
   const [paramsApi] = useParamsApiCallMutation();
   const [postAPi] = usePostApiCallMutation();
-  
-
+   const [deleteApi] = useDeleteApiCallMutation();
+ // const [getApi] = useGetApiCallQuery(timesheetService.get.getTaskList);
+  const [buttonDisable, setButtonDisable] = useState({});
+const [exceptName, setExceptName] = useState(false);
   const [taskList, setTaskList] = useState([])
   const [filterText, setFilterText] = useState();
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
-
   const coreValidations = new CoreValidations()
   const dayPlanValidations = yup.object().shape({
     taskName: coreValidations.stringValidation(2, 50),
   });
 
 
+
+
   const taskValidations = yup.object().shape({
-    taskName:coreValidations.stringValidation(2,50),
+    taskName: coreValidations.duplicateValidation(2,50,tasksList,'taskName',exceptName),
   });
 
   const dtOptions = {
     columnDefs: [
       { field: "taskName", headerName: "Task Name" },
       { field: "projectName", headerName: "Project Name" },
-      { field: "assignedTo", headerName: "Assigned By" },
+      { field: "assignedBy", headerName: "RL" },
       { field: "taskDescription", headerName: "Task Description" },
       { field: "taskHours", headerName: "Task Hours" },
       { field: "createdBy", headerName: "Created By" },
+     
       {
         headerName: "Actions",
         field: "actions",
         minWidth: 150,
-        cellRenderer: (params) => (
+        cellRenderer: (params) => {
+
+        
+
+            let statussubmit = (Number(params.data.submitStatus ) ===0) ;
+
+          
+      
+         
+
+          return(
+        
           <>
-            <CoreIconButton icon={faEdit} onClick={() => editTasks(params.data)} />
-            <CoreIconButton icon={faTrashAlt} color="error" onClick={() => deleteTasks(params.data)} />
+          
+            <CoreIconButton icon={faEdit}  title="Edit Task" disabled = {!statussubmit} onClick={() => editTasks(params.data)} />
+            <CoreIconButton icon={faTrashAlt} title="Delete Task" color="error" disabled = {!statussubmit} onClick={() => deleteTasks(params.data)} />
+              <CoreIconButton icon={faPaperPlane} title="Submit Task" color="success" disabled = {!statussubmit} onClick={() => submitTasks(params.data)} />
           </>
-        ),
+        );
       },
+      },
+       
+      {
+        headerName: "Status",
+        field: "status",
+        minWidth: 150,
+        cellRenderer: (params) => {
+
+        
+
+            let statussubmit = (Number(params.data.submitStatus ) ===0) ;
+            let approveStatus= (Number(params.data.approveStatus ) ===0) ;
+            let verifyStatus = (Number(params.data.approveStatus ) ===0) ;
+            let rejectStatus = (Number(params.data.rejectStatus ) ===0) ;
+          
+      
+         
+
+          return(
+        
+          <>
+          
+            <div style={{color:!statussubmit && !verifyStatus && !approveStatus && rejectStatus ?"green": (!rejectStatus ? "red":"blue")}} >{ !statussubmit && !verifyStatus && !approveStatus && rejectStatus? "Approved" : (!rejectStatus ? "Rejected":"Pending")}</div>
+          </>
+        );
+      },
+      },
+     
     ]
   }
 
@@ -74,9 +129,9 @@ function Tasks() {
 
   const TasksForm = [
     { field: "taskName", label: "Task Name", type: "Text" },
-    { field: "projectName", label: "Project Name", type: "Text", type: "SearchSelect" , options:projectList, keyName:"projectName", valueName:"projectId" },
-    { field: "assignedTo", label: "Assigned To", type: "SearchSelect", options:usersList, keyName:"profileName", valueName:"uid" },
-    { field: "taskHours", label: "Task Hours", type: "Time" },
+    { field: "projectName", label: "Project Name", type: "SearchSelect" , options:projectList, keyName:"projectName", valueName:"projectId" },
+    { field: "assignedBy", label: "Assigned By", type: "SearchSelect", options:rlList, keyName:"profileName", valueName:"profileName" },
+    { field: "taskHours", label: "Task Hours", type: "Text" },
     { field: "taskDescription", label: "Description", type: "Text", multiline:true },
   ]
 
@@ -84,27 +139,35 @@ function Tasks() {
     initialValues: {
       taskName: "",
       projectName: "",
-      assignedTo: "",
+      assignedBy: "",
       taskHours: "",
       taskDescription: "",
+      taskUId:"",
+      taskId:""
     
     },
     validationSchema: taskValidations,
   });
 
   const addTasks = () => {
+    //console.log(tasksList);
     TasksFormik.resetForm();
     setEditFlag(false)
     setShowModal(true)
   }
 
   const editTasks = (data) => {
+
+    console.log(tasksList),
+    setExceptName(data.taskName)
     TasksFormik.resetForm();
     TasksFormik.setValues({
-      projectName: data.projectName,
+      projectName : data.projectId,
+      taskName: data.taskName,
+      taskId:data.taskId,
       assignedBy: data.assignedBy,
-      startTime: data.startTime,
-      endTime: data.endTime,
+      taskHours: data.taskHours,
+      taskUId:data.taskUId,
       taskDescription: data.taskDescription
     })
     setEditFlag(true)
@@ -122,10 +185,13 @@ function Tasks() {
         "actionMode": editFlag ? "update" : "insert",
          "taskName": formVal.taskName,
          "taskDescription": formVal.taskDescription,
-         "projectId": 0,
-         "assignId": 0,
-         "assignName": "string",
-         "hours": formVal.taskHours,
+         "projectId": formVal.projectName,
+         "taskHours": formVal.taskHours,
+         "taskId":formVal.taskId,
+         "assignedBy" : formVal.assignedBy,
+         "createdBy":"kavya",
+         "taskUId" :3
+         
       };
 
       GlobalConfirmation({
@@ -133,38 +199,89 @@ function Tasks() {
       successMsg:editFlag ? 'Updated' :'Saved',
       onConfirm: async () => {
           const res = await postAPi({ url:timesheetService.post.saveTask, data:payload})
+         
           if (res.data) {
+             fetchTasks();
             setShowModal(false);
             Swal.fire( editFlag ? 'Updated!' :'Saved!', `Task ${editFlag ? 'Updated' :'Saved'} Successfully`, 'success');
+             setShowModal(false);
           }
         },
       });
     }
   };
 
+
+  const submitTasks = (data) =>{
+//setButtonDisable(prev => ({ ...prev, [data.taskId]: true}));
+     //  TasksFormik.resetForm();
+
+     
+        const formVal = TasksFormik.values
+    TasksFormik.setValues({
+      projectName: data.projectName,
+      assignedBy: data.assignedBy,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      taskDescription: data.taskDescription,
+      taskId : data.taskId,
+    })
+
+    const payload = {
+      
+         "taskId": data.taskId,
+         "submittedBy": "kavya"
+         
+         
+      };
+
+    GlobalConfirmation({
+      
+      confirmButtonText: "Submit",
+      successMsg: "Submitted",
+      onConfirm: async () => {
+      await paramsApi({ url: timesheetService.params.submitTask, data : payload })
+      fetchTasks();
+        setShowModal(false);
+      },
+    });
+
+     
+
+  }
+
   const deleteTasks = (data) => {
     GlobalConfirmation({
       confirmButtonText: "Delete",
       successMsg: "Deleted",
       onConfirm: async () => {
-        // await deleteApi({ url: timesheetService.delete.globalDelete, data: { actionMode: 'Department', id: data.departmentId } })
+        await deleteApi({ url: timesheetService.delete.deleteTask, data: { actionMode: "Delete" , taskId: data.taskId } })
+        fetchTasks();
         setShowModal(false);
       },
     });
   }
 
-  const getTasksList = async () => {
-    const res = await paramsApi({ url: timesheetService.params.getDayPlayByDate, data: { uId: userData?.uId, date: '2026-10-14' } })
-    setTaskList(res.data);
-  }
+  // const getTasksList = async () => {
+  //   const res = await paramsApi({ url: timesheetService.params.getDayPlayByDate, data: { uId: userData?.uId, date: '' } })
+  //   setTaskList(res.data);
+  // }
 
-  useEffect(() => {
-    getTasksList();
-  }, [])
+
+  // const getTaskList = async () =>{
+
+  //   const res = await getApi({ url: timesheetService.get.getTaskList, data: { uId: userData?.uId, date: '' } })
+  //   setTaskList(res.data);
+
+  // }
+
+  // useEffect(() => {
+  //   getTaskList();
+  // }, [])
 
   return (
     <>
-      <Grid container spacing={2} sx={{ p: 1, alignItems: "center" }}>
+      <Grid container spacing={2} sx={{ p: 1, alignItems: "center" ,mt: '68px', ml: '240px',}}>
         <Grid item size={5}>
           <Typography variant="h6">Tasks</Typography>
         </Grid>
@@ -179,8 +296,8 @@ function Tasks() {
           
         </Grid>
       </Grid>
-      <Box sx={{ px: 2 }}>
-        <AgGridDataTable dtOptions={dtOptions} data={taskList} filterInput={filterText} />
+      <Box sx={{ px: 2 , ml: '240px'}}>
+        <AgGridDataTable dtOptions={dtOptions} data={tasksList} filterInput={filterText} />
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="md" fullWidth>
         <DialogTitle>{editFlag ? "Edit Task" : "Add Task"}</DialogTitle>

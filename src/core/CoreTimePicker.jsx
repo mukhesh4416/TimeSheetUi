@@ -6,26 +6,50 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'; // Optional, used for layout
 import dayjs from 'dayjs';
 
-function CoreTimePicker({}) {
- const [value, setValue] = React.useState(dayjs());
+function CoreTimePicker({label,formFormik,field}) {
+
+  const { values, setFieldValue, touched, errors } = formFormik;
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['TimePicker']}>
-        <TimePicker
-          label="Task Hours"
-          value={value}
-          ampm={false}
-          onChange={(newValue) => setValue(newValue)}
-            slotProps={{
-                textField: {
-                    size: 'small'
-                },
-            }}
-            
-        />
-      </DemoContainer>
+      <TimePicker
+        label={label}
+        ampm={false}
+        value={values[field] ? dayjs(values[field]) : null}
+        onChange={(newValue) => {
+          // Update Formik field value with ISO time or raw object
+          setFieldValue(field, newValue ? newValue.toISOString() : null);
+        }}
+        slotProps={{
+          textField: {
+            size: "small",
+            fullWidth: true,
+            error: Boolean(touched[field] && errors[field]),
+            helperText: touched[field] && errors[field] ? errors[field] : "",
+          },
+        }}
+      />
     </LocalizationProvider>
+
+  
+
+ 
+    // <LocalizationProvider dateAdapter={AdapterDayjs}>
+    //   <DemoContainer components={['TimePicker']}>
+    //     <TimePicker
+    //       label="Task Hours"
+    //       value={value}
+    //       ampm={false}
+    //       onChange={(newValue) => setValue(newValue)}
+    //         slotProps={{
+    //             textField: {
+    //                 size: 'small'
+    //             },
+    //         }}
+            
+    //     />
+    //   </DemoContainer>
+    // </LocalizationProvider>
   );
 }
 

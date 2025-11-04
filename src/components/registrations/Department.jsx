@@ -130,16 +130,16 @@ function Department() {
 
   return (
     <>
-      <Grid container spacing={2} sx={{ p:1,px:2, alignItems: "center" }}>
-        <Grid item size={6}>
-          <Typography variant="h6">Department List</Typography>
+      <Grid container spacing={2} sx={{ p:1,px:2, alignItems: "center" ,mt: '68px', ml: '240px',  }}>
+        <Grid item size={6}  >
+          <Typography variant="h6" >Department List</Typography>
         </Grid>
         <Grid item size={6} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
           <CoreButton onClick={addDepartment}>Add Department</CoreButton>
           <GlobalFilter onFilterChange={setFilterText} />
         </Grid>
       </Grid>
-      <Box sx={{ px:2 }}>
+      <Box sx={{ px:2,mt: '15px', ml: '240px'}}>
         <AgGridDataTable dtOptions={dtOptions} data={departmentList} filterInput={filterText} />
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>

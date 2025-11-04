@@ -2,13 +2,13 @@
 
 
 .ag-theme-alpine {
-  border: #FFA500 !important;
+ // border: #FFA500 !important;
   background: $body-color;
 }
 
 .ag-theme-alpine .ag-header-cell {
-  background-color: #FFFFFF;
-  border: 0px solid #FFA500;
+  background-color: #001F3F;
+ // border: 0px solid #FFA500;
 }
 
 .ag-theme-alpine .ag-header-cell:hover{
@@ -17,7 +17,7 @@
 
 .ag-theme-alpine .ag-cell {
   background: $body-color;
-  border: 1px solid #FFA500 !important;
+ // border: 1px solid #FFA500 !important;
   border-left: 0px !important;
 }
 
@@ -27,7 +27,7 @@
 
 .ag-viewport {
   background: $body-color;
-  border-left: 0px solid #FFA500 !important;
+ // border-left: 0px solid #FFA500 !important;
   
 }
 

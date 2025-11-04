@@ -8,6 +8,7 @@ export const GlobalConfirmation = async ({
   confirmButtonText="Accept",
   cancelButtonText="Cancel",
   showCancelButton = true,
+  confirmButtonColor = "#FFA500",
   reverseButtons=false,
 }) => {
   const result = await Swal.fire({
@@ -17,6 +18,7 @@ export const GlobalConfirmation = async ({
     confirmButtonText:confirmButtonText,
     cancelButtonText: cancelButtonText,
     showCancelButton: showCancelButton,
+    confirmButtonColor:confirmButtonColor,
     reverseButtons: reverseButtons,
   });
 

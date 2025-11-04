@@ -9,6 +9,10 @@ import Department from './components/registrations/Department'
 import Dayplan from './components/Dayplan'
 import ForgotPassword from './authentications/ForgotPassword'
 import Tasks from './components/Tasks'
+import ManagerTasks from './components/ManagerTasks'
+import RLTasks from './components/RLTasks'
+import TimesheetRL from './components/TimesheetRL'
+import TimesheetManager from './components/TimesheetManager'
 
 function RouterConfig() {
   return (
@@ -24,6 +28,10 @@ function RouterConfig() {
             <Route path="designation" element={<Designation/>} />
             <Route path="projects" element={<Projects/>} />
             <Route path="user-registration" element={<UserRegistration/>} />
+            <Route path = "manager" element ={<ManagerTasks/>}/>
+             <Route path = "rl-tasks" element ={<RLTasks/>}/>
+              <Route path = "rl-timesheets" element ={<TimesheetRL/>}/>
+              <Route path = "manager-timesheets" element ={<TimesheetManager/>}/>
           </Route>
     </Routes>
   )

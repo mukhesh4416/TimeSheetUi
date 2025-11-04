@@ -12,12 +12,12 @@ import GlobalFilter from '../core/GlobalFilter';
 import DynamicForm from '../core/DynamicForm';
 import userService from '../shared/services/UserService';
 import CoreIconButton from '../core/CoreIconButton';
-import { faEdit, faTrashAlt, faPlus, faPaperPlane, faSave, faMarsAndVenus } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrashAlt, faPlus, faPaperPlane, faSave, faMarsAndVenus, faClose, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { GlobalConfirmation } from '../core/GlobalConfirmation';
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
 
-function Dayplan() {
+function TimesheetRL() {
   const userData = JSON.parse(sessionStorage.getItem("userData"));
   const [newData,setNewData] = useState(userData);
   
@@ -25,7 +25,7 @@ function Dayplan() {
  // const {data:projectList} = useGetApiCallQuery(userService.get.getAllProjects);
  // const {data:downTeamList} = useGetApiCallQuery(`${userService.get.getDownTeamList}+${userData?.uid}`);
  // const {data:usersList} = useGetApiCallQuery(userService.get.getUserList);
-  //const {data:timesheetList,refetch:fetchTimesheets} = useGetApiCallQuery(timesheetService.get.getAllTimeSheets);
+ // const {data:timesheetList,refetch:fetchTimesheets} = useGetApiCallQuery(timesheetService.get.getAllTimeSheets);
   //const {data:rlList} = useGetApiCallQuery("http://10.100.72.249:8080/timeSheet.service/getAllRLList");
   // const {data:tasksList} = useGetApiCallQuery(timesheetService.get.getTaskList);
   // const {data:projectList} = useGetApiCallQuery(userService.get.getAllProjects);
@@ -33,14 +33,17 @@ function Dayplan() {
 
   const { data: tasksList } = useGetApiCallWithParamsQuery({
   url: timesheetService.get.getAllApprovedTasksList,
-  params: { userId: 3 }, 
+  params: { userId: 2 }, 
 });
 
-const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQuery({
-  url: timesheetService.get.UserTimesheet,
-  params: { userId: 3 }, 
+
+  const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQuery({
+  url: timesheetService.get.RLTimesheet,
+  params: { reportingLevelId: 2 }, 
 });
 
+const [rejectform, setRejectForm] = useState(false);
+const [rejectTimesheet,setRejectTimesheet] = useState();
   const [paramsApi] = useParamsApiCallMutation();
   const [postAPi] = usePostApiCallMutation();
   const [ deleteApi ] = useDeleteApiCallMutation();
@@ -84,13 +87,13 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
         minWidth: 150,
         cellRenderer: (params) => {
 
-          let statussubmit = (Number(params.data.submitStatus ) ===0) ;
+          let statussubmit = (Number(params.data.verifyStatus ) ===0) ;
 
           return(
           <>
             <CoreIconButton icon={faEdit} title="Edit Timesheet" disabled={!statussubmit} onClick={() => edittimesheet(params.data)} />
-            <CoreIconButton icon={faTrashAlt} title="Delete Timesheet" disabled={!statussubmit} color="error" onClick={() => deleteTimesheet(params.data)} />
-              <CoreIconButton icon={faPaperPlane} title="Save Timesheet"color="success" disabled={!statussubmit} onClick={() => submitTimesheet(params.data)} />
+            <CoreIconButton icon={faCheck} title="Verify Timesheet" disabled={!statussubmit} color="success" onClick={() => verifyTimesheet(params.data)} />
+              <CoreIconButton icon={faClose} title="Reject Timesheet"color="error" disabled={!statussubmit} onClick={() => RLreject(params.data)} />
 
           </>
           )
@@ -105,10 +108,8 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
 
         
 
-            let statussubmit = (Number(params.data.submitStatus ) ===0) ;
-             let verifyStatus = (Number(params.data.verifyStatus ) ===0) ;
-              let approveStatus = (Number(params.data.approveStatus ) ===0) ;
-            let rejectStatus = (Number(params.data.rejectStatus ) ===0) ;
+            let statussubmit = (Number(params.data.verifyStatus ) ===0) ;
+            
           
       
          
@@ -116,7 +117,8 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
           return(
         
           <>
-       <div style={{color:!statussubmit && !verifyStatus && !approveStatus && rejectStatus ?"green": (!rejectStatus ? "red":"blue")}} >{ !statussubmit && !verifyStatus && !approveStatus && rejectStatus? "Approved" : (!rejectStatus ? "Rejected":"Pending")}</div>
+          
+            <div style={{color:!statussubmit?"green":"red"}} >{ !statussubmit ? "Verified" : "Pending"}</div>
             
           </>
         );
@@ -173,7 +175,19 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
 
   ]
 
+  const rejectForm =[
   
+       { field: "remarks", label: "Remarks", type: "Text" },
+  
+    ]
+  
+    const RejectFormik = useFormik(
+      {
+        initialValues:{
+          remarks:""
+        }
+      }
+    )
 
   const addtimesheet = () => {
     timesheetFormik.resetForm();
@@ -205,7 +219,7 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
     const formVal = timesheetFormik.values
     if(timesheetFormik.isValid){
       const payload = {
-       // "createdBy": userData?.profileName,
+        "createdBy": userData?.profileName,
         "timesheetId":formVal.timesheetId,
          "taskId" : formVal.taskId,
          //"taskDescription": formVal.taskDescription,
@@ -215,9 +229,7 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
         // "taskHours": formVal.taskHours,
          "startTime":formVal.startTime,
          "endTime":formVal.endTime,
-          "createdBy" : "kavya",
         "actionMode": editFlag ? "update" : "insert",
-       
       };
 
       GlobalConfirmation({
@@ -279,51 +291,85 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
 
   }
 
-
-
-   const submitAllTimesheet = () =>{
-
-   
-
-    const payload = {
-      
-         "taskUId": 3,
+  const verifyTimesheet = (data) =>{
+         // const formVal = TasksFormik.values
+      timesheetFormik.setValues({
+        projectName: data.projectName,
+        assignedBy: data.assignedBy,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        taskDescription: data.taskDescription,
+        timesheetId: data.timesheetId,
+      })
+  
+      const payload = {
         
-         
-         
-      };
+           "timeSheetId": data.timesheetId,
+           "verifiedBy": "Meehika"
+           
+           
+        };
+         GlobalConfirmation({
+                
+                confirmButtonText: "Verify",
+                successMsg: "Verified",
+                onConfirm: async () => {
+                await paramsApi({ url: timesheetService.params.verifyTimesheet, data : payload })
+               fetchTimesheets();
+                  setShowModal(false);
+                  setButtonStatus(false);
+                },
+              });
+  
+    }
 
-    GlobalConfirmation({
-      
-      confirmButtonText: "Submit",
-      successMsg: "Submitted",
-      onConfirm: async () => {
-      await postAPi({ url: timesheetService.post.submitAllTimeSheets, data : payload })
-      fetchTimesheets();
-        setShowModal(false);
-      },
-    });
+     const RLreject = (data) =>{
 
-     
+   setRejectTimesheet(data);
+
+    setRejectForm(true);
+    return
 
   }
 
-  // const finalsubmission () =>
-  // {}
+  const RejectTimesheet = () => {
+
+    RejectFormik.setTouched({ remarks: true });
+  const formVal = RejectFormik.values;
+
+  const Id = rejectTimesheet?.timesheetId;
+  if (formVal.remarks && formVal.remarks.trim() !== "" && RejectFormik.isValid) {
+    const payload = {
+      timeSheetId: Id,
+      rejectedBy: "Meehika",
+      remarks: formVal.remarks,
+    };
+
+    GlobalConfirmation({
+      confirmButtonText: "Reject",
+      successMsg: "Rejected",
+      onConfirm: async () => {
+        await paramsApi({
+          url: timesheetService.params.rejectTimesheetRL,
+          data: payload,
+        });
+       // setShowModal(false);
+       // setButtonStatus(false);
+        setRejectForm(false);
+        RejectFormik.resetForm();
+        setRejectTimesheet(null);
+      },
+    });
+  }
+
+  }
+
+
   
-
-  // const getDayPlanList = async () => {
-  //   const res = await paramsApi({ url: timesheetService.params.getDayPlayByDate, data: { uId: userData?.uId, date: '2026-10-14' } })
-  //   setDayPlanList(res.data);
-  // }
-
-  // useEffect(() => {
-  //   getDayPlanList();
-  // }, [])
 
   return (
     <>
-      <Grid container spacing={2} sx={{ p: 1, alignItems: "center",mt: '68px', ml: '240px', }}>
+      <Grid container spacing={2} sx={{ p: 1, alignItems: "center" ,mt: '68px', ml: '240px', }}>
         <Grid item size={5}>
           <Typography variant="h6">Time sheet</Typography>
         </Grid>
@@ -333,14 +379,14 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
           </form> */}
         </Grid>
         <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-           <CoreButton onClick={addtimesheet}>Add Timesheet</CoreButton> 
+          {/* <CoreButton onClick={addtimesheet}>Add Timesheet</CoreButton> */}
           <GlobalFilter onFilterChange={setFilterText} />
           {/* <CoreDatePicker/> */}
         </Grid>
       </Grid>
-      <Box sx={{ px: 2 , ml: '240px'}}>
+      <Box sx={{ px: 2 ,ml: '240px' }}>
         <AgGridDataTable dtOptions={dtOptions} data={timesheetList} filterInput={filterText}  />
-        <Box sx={{ display: "flex", justifyContent: "center",mb: 4}}><CoreButton onClick={submitAllTimesheet}>Submit Timesheets</CoreButton></Box>
+        {/* <Box sx={{ display: "flex", justifyContent: "center",mb: 4}}><CoreButton>Submit Timesheets</CoreButton></Box> */}
         
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="md" fullWidth>
@@ -355,8 +401,21 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
           <CoreButton color={"secondary"} onClick={() => setShowModal(false)} >Close</CoreButton>
         </DialogActions>
       </Dialog>
+
+       <Dialog open={rejectform} onClose={() => setRejectForm(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Reject</DialogTitle>
+        <DialogContent>
+          <form onSubmit={RejectFormik.handleSubmit} id="reject-form">
+            <DynamicForm formTemplate={rejectForm} formFormik={RejectFormik} size={6} />
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <CoreButton onClick={()=>RejectTimesheet()}>Reject</CoreButton>
+          <CoreButton color={"secondary"} onClick={() => setRejectForm(false)} >Close</CoreButton>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }
 
-export default Dayplan
+export default TimesheetRL

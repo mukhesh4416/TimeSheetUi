@@ -38,30 +38,34 @@ function UserRegistration() {
 
   const coreValidations = new CoreValidations()
   const userValidations = yup.object().shape({
-    // userName: coreValidations.duplicateValidation(2,50,userList,'userName',exceptName),
+ userName: coreValidations.duplicateValidation(2,50,usersList,'userName',exceptName),
   });
 
   const userForm = [
     { field: "userName", label: "User Name", type: "Text" },
     { field: "profileName", label: "Profile Name", type: "Text" },
-    { field: "mailId", label: "Mail Id", type: "Text" },
+    { field: "userEmail", label: "Mail Id", type: "Text" },
     { field: "empCode", label: "Employee Code", type: "Text" },
     { field: "phoneNumber", label: "Phone Number", type: "Text" },
     { field: "department", label: "Department", type: "SearchSelect", options:departmentList, keyName:"departmentName", valueName:"departmentId" },
     { field: "designation", label: "Designation", type: "SearchSelect", options:desingationList, keyName:"designationName", valueName:"designationId" },
-    { field: "reportingLevel", label: "Reporting Level", type: "SearchSelect", options:usersList, keyName:"profileName", valueName:"uid" },
+    { field: "reportingLevel", label: "Reporting Level", type: "SearchSelect", options:usersList, keyName:"profileName", valueName:"userId" },
+    
   ]
 
   const userFormik = useFormik({
     initialValues: {
       userName:"",
       profileName:"",
-      mailId:"",
+      userEmail:"",
       empCode:"",
       phoneNumber:"",
       department:"",
       designation:"",
       reportingLevel:"",
+      userId:"",
+      departmentId:"",
+      designationId:"",
     },
     validationSchema: userValidations,
   });
@@ -71,12 +75,13 @@ function UserRegistration() {
       { field: "profileName", headerName: "Profile Name", minWidth: 170 },
       { field: "empCode", headerName: "Employee Code", minWidth: 170 },
       { field: "userName", headerName: "User Name", minWidth: 170 },
-      { field: "mailId", headerName: "Mail Id", minWidth: 170 },
+      { field: "userEmail", headerName: "Mail Id", minWidth: 170 },
       { field: "phoneNumber", headerName: "Phone Number", minWidth: 170 },
       { field: "departmentName", headerName: "Department", minWidth: 170 },
       { field: "designationName", headerName: "Designation", minWidth: 170 },
-      { field: "rlName", headerName: "Reporting Level", minWidth: 170 },
+      { field: "reportingLevel", headerName: "Reporting Level", minWidth: 170 },
       { field: "createdBy", headerName: "Created By" },
+       { field: "createdDate", headerName: "Created On" },
       {
         headerName: "Actions",
         field: "actions",
@@ -85,11 +90,15 @@ function UserRegistration() {
           <>
             <CoreIconButton icon={faEdit} onClick={() => editUser(params.data)} />
             <CoreIconButton icon={faTrashAlt} color="error" onClick={() => deleteUser(params.data)} />
+             {/* <CoreIconButton icon={faEdit} onClick={() => grantAccess(params.data)} /> */}
           </>
         ),
       },
     ]
   }
+
+
+ 
 
   const addUser = () => {
     setExceptName('')
@@ -103,7 +112,16 @@ function UserRegistration() {
     userFormik.resetForm();
     userFormik.setValues({
       userName: data.userName,
-      userId: data.userId
+      userEmail:data.userEmail,
+      department:data.departmentName,
+      designation:data.designationName,
+      phoneNumber: data.phoneNumber,
+      profileName:data.profileName,
+      designationId:data.designationId,
+      departmentId:data.departmentId,
+      empCode:data.empCode,
+      userId:data.userId,
+    
     })
     setEditFlag(true)
     setShowModal(true);
@@ -114,7 +132,7 @@ function UserRegistration() {
       confirmButtonText:"Delete",
       successMsg:"Deleted",
       onConfirm: async () => {
-        await deleteApi({ url:userService.delete.globalDelete, data:{actionMode:'User',id:data.uid}})
+        await deleteApi({ url:userService.delete.globalDelete, data:{actionMode:'User',id:data.userId}})
         fetchUsers();
         setShowModal(false);
       },
@@ -133,7 +151,7 @@ function UserRegistration() {
         "actionMode": editFlag?'update':'insert',
         "userName": formVal.userName,
         "profileName":  formVal.profileName,
-        "mailId": formVal.mailId,
+        "userEmail": formVal.userEmail,
         "password": formVal.userName+'@123',
         "reportingLevel": formVal.reportingLevel,
         "designationId": formVal.designation,
@@ -141,6 +159,7 @@ function UserRegistration() {
         "empCode": formVal.empCode,
         "phoneNumber": formVal.phoneNumber,
         "createdBy": userData?.profileName,
+        "userId" : formVal.userId,
       };
 
       GlobalConfirmation({
@@ -160,7 +179,7 @@ function UserRegistration() {
 
   return (
     <>
-      <Grid container spacing={2} sx={{ p: 1, alignItems: "center" }}>
+      <Grid container spacing={2} sx={{ p: 1,px:2, alignItems: "center",mt: '68px', ml: '240px', }}>
         <Grid item size={6}>
           <Typography variant="h6">Users List</Typography>
         </Grid>
@@ -169,7 +188,7 @@ function UserRegistration() {
           <GlobalFilter onFilterChange={setFilterText} />
         </Grid>
       </Grid>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2 , ml: '240px'}}>
         <AgGridDataTable dtOptions={dtOptions} data={usersList} filterInput={filterText} />
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="lg" fullWidth>

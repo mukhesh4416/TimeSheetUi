@@ -1,7 +1,7 @@
 import { TextField } from '@mui/material'
 import React from 'react'
 
-function CoreTextField({field,label,formFormik,multiline=false,rowCols=2}) {
+function CoreTextField({field,label,formFormik,multiline=false,rowCols=2 ,readOnly=false}) {
   return (
     <TextField
       // sx={{my:1}}
@@ -22,6 +22,12 @@ function CoreTextField({field,label,formFormik,multiline=false,rowCols=2}) {
       helperText={
         formFormik.touched[field] && formFormik.errors[field]
       }
+
+      slotProps={{
+        input: {
+          readOnly: readOnly,
+        },
+      }}
     />
   )
 }

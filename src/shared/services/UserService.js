@@ -1,31 +1,31 @@
 import React from "react";
 import { baseUrl } from "../global";
 
-const url = baseUrl + 'user/'
 const userService = {
 
     get: {
-        "getAllDepartments": url + 'getAllDept',
-        "getAllDesignations": url + 'getAllDesig',
-        "getAllProjects": url + 'getAllProj',
-        "getAllUsersList": url + 'getAllUsersList',
-        "getUserList": url + 'getUserList',
-        "getDownTeamList": url + 'getDownTeamList?uid=',
+        "getAllDepartments": baseUrl + 'getAllDept',
+        "getAllDesignations": baseUrl + 'getAllDesig',
+        "getAllProjects": baseUrl + 'allProj',
+        "getAllUsersList": baseUrl + 'getAllUsers',
+        "getUserList": baseUrl + 'getUserList',
+        "getDownTeamList": baseUrl + 'getDownTeamList?uid=',
 
     },
 
     delete: {
-        "globalDelete": url + 'deleteAny'
+        "globalDelete": baseUrl + 'deleteAny',
+        "deleteProject":baseUrl+'deleteProject',
     },
 
     params: {
     },
 
     post: {
-        "saveDepartment": url + 'saveDept',
-        "saveDesignation": url + 'saveDesig',
-        "saveProject": url + 'saveProject',
-        "userRegistration": url + 'registerUser',
+        "saveDepartment": baseUrl + 'saveDept',
+        "saveDesignation": baseUrl + 'saveDesig',
+        "saveProject": baseUrl + 'saveProject',
+        "userRegistration": baseUrl + 'registerUser',
         
     },
 

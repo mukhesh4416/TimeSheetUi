@@ -7,6 +7,8 @@ import CoreSelect from './CoreSelect.jsx';
 import CoreSearchSelect from './CoreSearchSelect.jsx';
 import CoreDateTimePicker from './CoreDateTimePicker.jsx';
 import CoreTimePicker from './CoreTimePicker.jsx';
+import CoreDatePicker from './CoreDatePicker.jsx';
+import CustomdatePicker from './CustomdatePicker.jsx';
 
 
 function DynamicForm({ formTemplate, formFormik, size=12 }) {
@@ -14,7 +16,7 @@ function DynamicForm({ formTemplate, formFormik, size=12 }) {
   const formInputTemplate = (fieldConfig) => {
     switch (fieldConfig.type) {
       case "Text":
-        return <CoreTextField field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} multiline={fieldConfig?.multiline}/>
+        return <CoreTextField field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik}  readOnly={fieldConfig?.readOnly || false} multiline={fieldConfig?.multiline}/>
 
       case "Number":
         return <CoreTextField field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} />
@@ -26,8 +28,11 @@ function DynamicForm({ formTemplate, formFormik, size=12 }) {
         return <CoreSearchSelect field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} options={fieldConfig.options} keyName={fieldConfig.keyName}
           valueName={fieldConfig.valueName}
           getOptionLabel={(option) => option[fieldConfig.valueName] || ''}
+           relatedFields={fieldConfig.relatedFields}
       
         />
+        case "Date":
+        return <CoreDatePicker field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} />
         case "DateTime":
         return <CoreDateTimePicker field={fieldConfig.field} label={fieldConfig.label} formFormik={formFormik} />
         case "Time":

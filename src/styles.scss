@@ -4,18 +4,19 @@
 /* header */
 .MuiDialogTitle-root {
   background-color: $header-color;
-  border-bottom: 2px solid #FFA500;
+ border-bottom: 1px solid #001F3F;
 }
 
 /* body  */
 .MuiDialogContent-root {
-  padding: 15px 15px !important;
+  padding: 30px 35px !important;
   background-color: $body-color;
 }
 
 /* footer */
 .MuiDialogActions-root {
-  border-top: 2px solid #FFA500 ;
+  
+  border-top: 1px solid #001F3F;
   background-color: $header-color;
 }
 

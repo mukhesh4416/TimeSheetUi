@@ -130,7 +130,7 @@ function Designation() {
 
   return (
     <>
-      <Grid container spacing={2} sx={{ p: 1, alignItems: "center" }}>
+      <Grid container spacing={2} sx={{ p: 1, px:2,alignItems: "center", mt: '68px', ml: '240px',}}>
         <Grid item size={6}>
           <Typography variant="h6">Designation List</Typography>
         </Grid>
@@ -139,7 +139,7 @@ function Designation() {
           <GlobalFilter onFilterChange={setFilterText} />
         </Grid>
       </Grid>
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2 , ml: '240px' }}>
         <AgGridDataTable dtOptions={dtOptions} data={designationList} filterInput={filterText} />
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="xs" fullWidth>
