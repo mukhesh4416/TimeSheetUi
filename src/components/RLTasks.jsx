@@ -193,6 +193,7 @@ const [exceptName, setExceptName] = useState(false);
              fetchTasks();
             setShowModal(false);
             Swal.fire( editFlag ? 'Updated!' :'Saved!', `Task ${editFlag ? 'Updated' :'Saved'} Successfully`, 'success');
+            setShowModal(false);
           }
         },
       });
@@ -227,7 +228,7 @@ const [exceptName, setExceptName] = useState(false);
       successMsg: "Verified",
       onConfirm: async () => {
       await paramsApi({ url: timesheetService.params.verifyTask, data : payload })
-     //fetchTasks();
+        fetchTasks();
         setShowModal(false);
         setButtonStatus(false);
       },
@@ -263,6 +264,7 @@ console.log(data)
             url: timesheetService.params.rejectTaskRL,
             data: payload,
           });
+          fetchTasks();
           setShowModal(false);
           setButtonStatus(false);
           setRejectForm(false);
@@ -377,6 +379,7 @@ console.log(data)
         });
        // setShowModal(false);
        // setButtonStatus(false);
+       fetchTasks();
         setRejectForm(false);
         RejectFormik.resetForm();
         setRejectTask(null);

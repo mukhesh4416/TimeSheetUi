@@ -229,6 +229,7 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
             fetchTimesheets();
             setShowModal(false);
             Swal.fire( editFlag ? 'Updated!' :'Saved!', `TimeSheet ${editFlag ? 'Updated' :'Saved'} Successfully`, 'success');
+             setShowModal(false);
           }
         },
       });

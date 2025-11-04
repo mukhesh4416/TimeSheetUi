@@ -244,6 +244,7 @@ function TimesheetManager() {
             fetchTimesheets();
             setShowModal(false);
             Swal.fire( editFlag ? 'Updated!' :'Saved!', `TimeSheet ${editFlag ? 'Updated' :'Saved'} Successfully`, 'success');
+             setShowModal(false);
           }
         },
       });
@@ -317,6 +318,7 @@ const approveTimesheet = (data) =>{
         });
        // setShowModal(false);
        // setButtonStatus(false);
+          fetchTimesheets();
         setRejectForm(false);
         RejectFormik.resetForm();
         setRejectTimesheet(null);

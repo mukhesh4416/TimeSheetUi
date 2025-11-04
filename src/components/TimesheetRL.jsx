@@ -91,7 +91,7 @@ const [rejectTimesheet,setRejectTimesheet] = useState();
 
           return(
           <>
-            <CoreIconButton icon={faEdit} title="Edit Timesheet" disabled={!statussubmit} onClick={() => edittimesheet(params.data)} />
+            {/* <CoreIconButton icon={faEdit} title="Edit Timesheet" disabled={!statussubmit} onClick={() => edittimesheet(params.data)} /> */}
             <CoreIconButton icon={faCheck} title="Verify Timesheet" disabled={!statussubmit} color="success" onClick={() => verifyTimesheet(params.data)} />
               <CoreIconButton icon={faClose} title="Reject Timesheet"color="error" disabled={!statussubmit} onClick={() => RLreject(params.data)} />
 
@@ -241,6 +241,7 @@ const [rejectTimesheet,setRejectTimesheet] = useState();
             fetchTimesheets();
             setShowModal(false);
             Swal.fire( editFlag ? 'Updated!' :'Saved!', `TimeSheet ${editFlag ? 'Updated' :'Saved'} Successfully`, 'success');
+            setShowModal(false);
           }
         },
       });
@@ -355,6 +356,7 @@ const [rejectTimesheet,setRejectTimesheet] = useState();
         });
        // setShowModal(false);
        // setButtonStatus(false);
+          fetchTimesheets();
         setRejectForm(false);
         RejectFormik.resetForm();
         setRejectTimesheet(null);
