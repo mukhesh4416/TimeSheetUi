@@ -5,6 +5,7 @@ import React from 'react';
 
 function CoreSearchSelect({
   field,
+  autoSubmit = false,
   label,
   formFormik,
   options = [],
@@ -26,7 +27,7 @@ function CoreSearchSelect({
   const handleChange = (event, newValue) => {
     if (newValue) {
       // Set main field (like taskId)
-      console.log("Selected value:", newValue);
+      //console.log("Selected value:", newValue);
       setFieldValue(field, newValue[valueName]);
 
       // 👇 also set any related fields
@@ -34,6 +35,17 @@ function CoreSearchSelect({
          console.log(`Setting ${rel.formKey} = ${newValue[rel.sourceKey]}`);
         setFieldValue(rel.formKey, newValue[rel.sourceKey] || '');
       });
+
+
+ if (autoSubmit) {
+        handleSubmit();
+      }
+     else {
+      setFieldValue(field, '');
+      relatedFields.forEach((rel) => setFieldValue(rel.formKey, ''));
+    }
+
+
     } else {
       setFieldValue(field, '');
       relatedFields.forEach((rel) => setFieldValue(rel.formKey, ''));

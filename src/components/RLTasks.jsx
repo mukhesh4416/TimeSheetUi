@@ -1,4 +1,4 @@
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Autocomplete,TextField,MenuItem,Menu,Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { faEdit, faTrashAlt, faPlus, faPaperPlane, faCheckCircle, faThumbsUp,faClose } from "@fortawesome/free-solid-svg-icons";
 import timesheetService from '../shared/services/TimesheetService';
@@ -15,14 +15,15 @@ import DynamicForm from '../core/DynamicForm';
 import userService from '../shared/services/UserService';
 import { GlobalConfirmation } from '../core/GlobalConfirmation';
 import Swal from "sweetalert2";
+import CoreSearchSelect from '../core/CoreSearchSelect';
 
 
 function RLTasks() {
  
-  const { data: taskList, refetch:fetchTasks } = useGetApiCallWithParamsQuery({
-  url: timesheetService.get.RLtasks,
-  params: { reportingLevel: 2 }, 
-});
+//   const { data: taskList, refetch:fetchTasks } = useGetApiCallWithParamsQuery({
+//   url: timesheetService.get.RLtasks,
+//   params: { reportingLevelId: 2 }, 
+// });
    
  
 const [rejectTask,setRejectTask] = useState();
@@ -43,12 +44,46 @@ const [exceptName, setExceptName] = useState(false);
   });
 
 
+ const [ taskPayload, setTaskPayload] = useState( {
+          "taskUId" : 0,
+          "reportingLevel" : 2,
+          "monthYear" : new Date().toISOString().slice(0, 7)
+        })
 
+ const [ downteamPayload, setDownTeamPayload] = useState( {
+        
+          "reportingLevel" : 2,
+          
+        })
+
+  const [selectedMonth, setSelectedMonth] = useState("2025-11");
+  const [selectTeam,setSelectTeam] = useState();
+ 
+ const {data:downTeam} = useGetApiCallWithParamsQuery({ url:timesheetService.get.getDownTeam, params:downteamPayload});
+  const {data:taskList, refetch:fetchTasks } = useGetApiCallWithParamsQuery({ url:timesheetService.get.RLtasks, params:taskPayload});
+
+
+useEffect(() => {
+  console.log("downTeam:", downTeam);
+  
+  if (!selectedMonth && !selectTeam) return; 
+
+  const payload = {
+    taskUId: selectTeam || 0,
+    reportingLevel: 2,
+    monthYear: selectedMonth || new Date().toISOString().slice(0, 7),
+  };
+
+ // console.log("Fetching tasks with payload:", payload);
+  setTaskPayload(payload);
+  fetchTasks();
+}, [selectedMonth, selectTeam]);
 
 
 
   const dtOptions = {
     columnDefs: [
+      { field: "profileName", headerName: "Employee Name"},
       { field: "taskName", headerName: "Task Name" },
       { field: "projectName", headerName: "Project Name" },
     //  { field: "assignedTo", headerName: "Assigned By" },
@@ -83,23 +118,39 @@ const [exceptName, setExceptName] = useState(false);
         minWidth: 150,
         cellRenderer: (params) => {
 
+
+           
+          const data = params.data
+          if(+data.rejectStatus){
+            return <div className=' status rejected'>Rejected</div>
+          }else if(!+data.submitStatus){
+            return <div className='status pending'>Pending</div>
+          }else if(!+data.verifyStatus){
+            return <div className='status submitted'>Submitted</div>
+          }else if(!+data.approveStatus){
+            return <div className='status verified'>Verified</div>
+          }else{
+            return <div className='status approved'>Approved</div>
+          }
+      
+
         
 
-           let statussubmit = (Number(params.data.submitStatus ) ===0) ;
-            let approveStatus= (Number(params.data.approveStatus ) ===0) ;
-            let verifyStatus = (Number(params.data.verifyStatus ) ===0) ;
+        //    let statussubmit = (Number(params.data.submitStatus ) ===0) ;
+        //     let approveStatus= (Number(params.data.approveStatus ) ===0) ;
+        //     let verifyStatus = (Number(params.data.verifyStatus ) ===0) ;
 
           
       
          
 
-          return(
+        //   return(
         
-          <>
+        //   <>
           
-            <div style={{color:!verifyStatus && !statussubmit?"green":"red"}} >{ !verifyStatus && !statussubmit ? "Verified" : "Pending"}</div>
-          </>
-        );
+        //     <div style={{color:!verifyStatus && !statussubmit?"green":"red"}} >{ !verifyStatus && !statussubmit ? "Verified" : "Pending"}</div>
+        //   </>
+        // );
       },
       },
 
@@ -237,43 +288,43 @@ const [exceptName, setExceptName] = useState(false);
      
 
   }
-  const rejectTasks = (data) => {
-console.log(data)
-  setRejectForm(true);
-  RejectFormik.setTouched({
-    remarks: true,
-  });
-  const formVal = RejectFormik.values;
-  const Id = data.taskId;
+//   const rejectTasks = (data) => {
+// console.log(data)
+//   setRejectForm(true);
+//   RejectFormik.setTouched({
+//     remarks: true,
+//   });
+//   const formVal = RejectFormik.values;
+//   const Id = data.taskId;
     
-  if (formVal.remarks && formVal.remarks.trim() !== "") {
+//   if (formVal.remarks && formVal.remarks.trim() !== "") {
   
-    if (RejectFormik.isValid) {
-      //console.log(data.taskId);
-      const payload = {
-        taskId: Id,
-        rejectedBy: "Meehika",
-        remarks: formVal.remarks,
-      };
+//     if (RejectFormik.isValid) {
+//       //console.log(data.taskId);
+//       const payload = {
+//         taskId: Id,
+//         rejectedBy: "Meehika",
+//         remarks: formVal.remarks,
+//       };
 
-      GlobalConfirmation({
-        confirmButtonText: "Reject",
-        successMsg: "Rejected",
-        onConfirm: async () => {
-          await paramsApi({
-            url: timesheetService.params.rejectTaskRL,
-            data: payload,
-          });
-          fetchTasks();
-          setShowModal(false);
-          setButtonStatus(false);
-          setRejectForm(false);
-          RejectFormik.resetForm();
-        },
-      });
-    }
-  } 
-};
+//       GlobalConfirmation({
+//         confirmButtonText: "Reject",
+//         successMsg: "Rejected",
+//         onConfirm: async () => {
+//           await paramsApi({
+//             url: timesheetService.params.rejectTaskRL,
+//             data: payload,
+//           });
+//           fetchTasks();
+//           setShowModal(false);
+//           setButtonStatus(false);
+//           setRejectForm(false);
+//           RejectFormik.resetForm();
+//         },
+//       });
+//     }
+//   } 
+// };
 
 
 
@@ -389,6 +440,29 @@ console.log(data)
 
   }
 
+  const dropdownForm =[
+
+     
+      { field: "profileName", label: "Employee", type: "SearchSelect", options:downTeam, keyName:"profileName", valueName:"taskUId",autoSubmit : true },
+
+  ]
+
+  const dropdownFormik = useFormik(
+    {
+      initialValues:{
+        profileName:""
+      },
+
+       onSubmit: (values) => {
+    const emp = values.profileName; 
+    setSelectTeam(emp);
+    //console.log(selectTeam)
+  },
+    }
+  )
+
+
+
   
   return (
     <>
@@ -399,9 +473,43 @@ console.log(data)
         <Grid item size={2}>
           {}
         </Grid>
-        <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-          {/* <CoreButton onClick={addTasks}>Add Task</CoreButton> */}
-          <GlobalFilter onFilterChange={setFilterText} />
+        <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap:1 }}>
+           {/* <form onSubmit={dropdownFormik.handleSubmit} id="dayplan-form">
+<DynamicForm formTemplate={dropdownForm} formFormik={dropdownFormik}  size={20} /></form> */}
+
+<Autocomplete
+ sx={{
+    width: 200,
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 2,
+      backgroundColor: (theme) => theme.palette.background.paper,
+      '&.Mui-focused fieldset': {
+        borderColor: (theme) => theme.palette.primary.main,
+      },
+    },
+  }}
+  options={downTeam || []}
+  getOptionLabel={(option) => option?.profileName || ""}
+  // ✅ Use the selected ID to find the corresponding object
+  value={downTeam?.find((opt) => opt.userId === selectTeam) || null}
+  onChange={(event, newValue) => {
+    const selectedId = newValue?.userId || 0;
+    setSelectTeam(selectedId);
+    console.log( selectedId);
+  }}
+  isOptionEqualToValue={(option, value) => option.userId === value.userId}
+  renderInput={(params) => (
+    <TextField
+      {...params}
+      label="Select Team"
+      variant="outlined"
+      size="small"
+    />
+  )}
+/>
+        
+          <GlobalFilter onFilterChange={setFilterText} onMonthChange={setSelectedMonth}  />
+          
           
         </Grid>
       </Grid>

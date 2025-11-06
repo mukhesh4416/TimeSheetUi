@@ -42,6 +42,8 @@ export const globalApi = createApi({
       },
     }),
 
+ 
+
     deleteApiCall: builder.mutation({
       query: ({ url, data }) => {
         const dataKeys = Object.keys(data);
@@ -65,5 +67,6 @@ export const {
   usePostApiCallMutation,
   useParamsApiCallMutation,
   useDeleteApiCallMutation,
-  useGetApiCallWithParamsQuery
+  useGetApiCallWithParamsQuery,
+  
 } = globalApi;

@@ -19,23 +19,50 @@ const drawerWidth = 240;
 
 function MainHeader({
   container,
-  mobileOpen,
-  drawer,
-  handleDrawerTransitionEnd,
-  handleDrawerClose,
+
 }) {
+
+  const [employee,setEmployee] = useState(false);
+   const [rl,setRL] = useState(false);
+    const [manager,setManager] = useState(false);
+
+  const [anchorE,setAnchorE] =useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [anchorE2, setAnchorE2] = useState(null);
   const [anchorE3, setAnchorE3] = useState(null);
 
   // Menu handlers
+  const handleClick  = (event) => setAnchorE(event.currentTarget);
   const handleMenuClick = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClick2 = (event) => setAnchorE2(event.currentTarget);
   const handleMenuClick3 = (event) => setAnchorE3(event.currentTarget);
 
+  const handleClose1 = () => setAnchorE(null);
   const handleClose = () => setAnchorEl(null);
   const handleClose2 = () => setAnchorE2(null);
   const handleClose3 = () => setAnchorE3(null);
+
+
+  const handleRL = () => {
+
+    setEmployee(false);
+    setManager(false);
+    setRL(true);
+  }
+
+   const handleManager = () => {
+
+    setEmployee(false);
+    setManager(true);
+    setRL(false);
+  }
+
+   const handleEmployee = () => {
+   setManager(false);
+    setRL(false);
+    setEmployee(true);
+ 
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -54,6 +81,12 @@ function MainHeader({
           <Typography variant="h6" component="div" sx={{ flexGrow: 1,color:'#001F3F' ,fontWeight: 'bold', }}>
             Time Sheet
           </Typography>
+          <Button onClick={handleClick}>Profile</Button>
+           <Menu anchorEl={anchorE} open={Boolean(anchorE)} onClose={handleClose1}>
+          <MenuItem onClick={handleEmployee} >Employee</MenuItem>
+          <MenuItem onClick= {handleRL}>RL</MenuItem>
+          <MenuItem onClick={handleManager}>Manager</MenuItem>
+          </Menu>
           <IconButton
     onClick={(event) => setProfileAnchor(event.currentTarget)}
     sx={{ p: 0, ml: 2 }}
@@ -65,60 +98,14 @@ function MainHeader({
     />
   </IconButton>
 
-          {/* Timesheets Menu */}
-          {/* <Button color="inherit" onClick={handleMenuClick3}>
-            Timesheets
-          </Button>
-          <Menu anchorEl={anchorE3} open={Boolean(anchorE3)} onClose={handleClose3}>
-            <MenuItem onClick={handleClose3} component={Link} to="/timesheet/day-plan">
-              Employee
-            </MenuItem>
-            <MenuItem onClick={handleClose3} component={Link} to="/timesheet/rl-timesheets">
-              RL
-            </MenuItem>
-            <MenuItem onClick={handleClose3} component={Link} to="/timesheet/manager-timesheets">
-              Manager
-            </MenuItem>
-          </Menu> */}
 
-          {/* Tasks Menu */}
-          {/* <Button color="inherit" onClick={handleMenuClick2}>
-            Tasks
-          </Button>
-          <Menu anchorEl={anchorE2} open={Boolean(anchorE2)} onClose={handleClose2}>
-            <MenuItem onClick={handleClose2} component={Link} to="/timesheet/tasks">
-              Employee
-            </MenuItem>
-            <MenuItem onClick={handleClose2} component={Link} to="/timesheet/rl-tasks">
-              RL
-            </MenuItem>
-            <MenuItem onClick={handleClose2} component={Link} to="/timesheet/manager">
-              Manager
-            </MenuItem>
-          </Menu> */}
-
-          {/* Config Menu */}
-          {/* <Button color="inherit" onClick={handleMenuClick}>
-            Configuration
-          </Button>
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-            <MenuItem onClick={handleClose} component={Link} to="/timesheet/user-registration">
-              User Registration
-            </MenuItem>
-            <MenuItem onClick={handleClose} component={Link} to="/timesheet/department">
-              Department
-            </MenuItem>
-            <MenuItem onClick={handleClose} component={Link} to="/timesheet/designation">
-              Designation
-            </MenuItem>
-            <MenuItem onClick={handleClose} component={Link} to="/timesheet/projects">
-              Projects
-            </MenuItem>
-          </Menu> */}
         </Toolbar>
       </AppBar>
 
-      {/* ---------- Sidebar ---------- */}
+     
+
+
+
       <Drawer
         container={container}
         variant="permanent"
@@ -139,92 +126,65 @@ function MainHeader({
     },
   }}
       >
-        
-         <Button color="inherit" sx={{paddingTop:'16px'}} onClick={handleMenuClick3}>
-          <IconButton edge="start" color="white" aria-label="menu">
-            <FontAwesomeIcon icon={faFileCircleCheck} size="medium"  style={{ color: "#FFFFFF" }} />
-          </IconButton>
-            Timesheets
-          </Button>
-          <Menu anchorEl={anchorE3} open={Boolean(anchorE3)} onClose={handleClose3}>
-            <MenuItem onClick={handleClose3} component={Link} to="/timesheet/day-plan">
-              Employee
-            </MenuItem>
-            <MenuItem onClick={handleClose3} component={Link} to="/timesheet/rl-timesheets">
-              RL
-            </MenuItem>
-            <MenuItem onClick={handleClose3} component={Link} to="/timesheet/manager-timesheets">
-              Manager
-            </MenuItem>
-          </Menu>
-        <Button color="inherit" onClick={handleMenuClick2}>
-           <IconButton edge="start"  aria-label="menu">
-            <FontAwesomeIcon icon={faTasksAlt} size="medium"  style={{ color: "#FFFFFF" }} />
-          </IconButton>
-           Tasks
-          </Button>
-          <Menu anchorEl={anchorE2} open={Boolean(anchorE2)} onClose={handleClose2}>
-            <MenuItem onClick={handleClose2} component={Link} to="/timesheet/tasks">
-              Employee
-            </MenuItem>
-            <MenuItem onClick={handleClose2} component={Link} to="/timesheet/rl-tasks">
-              RL
-            </MenuItem>
-            <MenuItem onClick={handleClose2} component={Link} to="/timesheet/manager">
-              Manager
-            </MenuItem>
-          </Menu>
 
-          <Button color="inherit" component={Link} to="/timesheet/projects">
+        {manager && <>
+      <Button color="inherit" component={Link} to="/timesheet/projects">
            <IconButton edge="start" color="#FFFFFF" aria-label="menu">
             <FontAwesomeIcon icon={faDiagramProject} size="medium"  style={{ color: "#FFFFFF" }} />
           </IconButton>
             Projects
-          </Button>
+          </Button>  
 
-           <Button color="inherit" component={Link} to='/timesheet/user-registration'>
+          <Button color="inherit" component={Link} to="/timesheet/manager">
            <IconButton edge="start" color="#FFFFFF" aria-label="menu">
-            <FontAwesomeIcon icon={faUsers} size="medium"  style={{ color: "#FFFFFF" }} />
+            <FontAwesomeIcon icon={faTasksAlt} size="medium"  style={{ color: "#FFFFFF" }} />
           </IconButton>
-            Employee
-          </Button>
+            Tasks
+          </Button>  
+
+          <Button color="inherit" component={Link} to="/timesheet/manager-timesheets">
+           <IconButton edge="start" color="#FFFFFF" aria-label="menu">
+            <FontAwesomeIcon icon={faFileCircleCheck} size="medium"  style={{ color: "#FFFFFF" }} />
+          </IconButton>
+            Timesheets
+          </Button> 
+        </>}
+
+
+        {rl && <>
+      <Button color="inherit" component={Link} to="/timesheet/rl-tasks">
+           <IconButton edge="start" color="#FFFFFF" aria-label="menu">
+            <FontAwesomeIcon icon={faTasksAlt} size="medium"  style={{ color: "#FFFFFF" }} />
+          </IconButton>
+            Tasks
+          </Button>  
+
+          <Button color="inherit" component={Link} to="/timesheet/rl-timesheets">
+           <IconButton edge="start" color="#FFFFFF" aria-label="menu">
+            <FontAwesomeIcon icon={faFileCircleCheck} size="medium"  style={{ color: "#FFFFFF" }} />
+          </IconButton>
+            Timesheets
+          </Button> 
+        </>}
+
+
         
-         <Button color="inherit" onClick={handleMenuClick}>
+        {employee && <>
+      <Button color="inherit" component={Link} to="/timesheet/tasks">
            <IconButton edge="start" color="#FFFFFF" aria-label="menu">
-            <FontAwesomeIcon icon={faCogs} size="medium"  style={{ color: "#FFFFFF" }} />
+            <FontAwesomeIcon icon={faTasksAlt} size="medium"  style={{ color: "#FFFFFF" }} />
           </IconButton>
-            Configuration
-          </Button>
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-            <MenuItem onClick={handleClose} component={Link} to="/timesheet/user-registration">
-              User Registration
-            </MenuItem>
-            <MenuItem onClick={handleClose} component={Link} to="/timesheet/department">
-              Department
-            </MenuItem>
-            <MenuItem onClick={handleClose} component={Link} to="/timesheet/designation">
-              Designation
-            </MenuItem>
-            <MenuItem onClick={handleClose} component={Link} to="/timesheet/projects">
-              Projects
-            </MenuItem>
-          </Menu>
+            Tasks
+          </Button>  
+
+          <Button color="inherit" component={Link} to="/timesheet/day-plan">
+           <IconButton edge="start" color="#FFFFFF" aria-label="menu">
+            <FontAwesomeIcon icon={faFileCircleCheck} size="medium"  style={{ color: "#FFFFFF" }} />
+          </IconButton>
+            Timesheets
+          </Button> 
+        </>}
       </Drawer>
-
-      {/* ---------- Main Content ---------- */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 2,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          mt: '48px', // same as AppBar height
-        }}
-      >
-        {/* Your main content here */}
-
-        
-      </Box>
     </Box>
   );
 }
@@ -232,162 +192,3 @@ function MainHeader({
 export default MainHeader;
 
 
-// import React, { useState } from 'react';
-// import {
-//   AppBar,
-//   Toolbar,
-//   Drawer,
-//   Box,
-//   Typography,
-//   Button,
-//   IconButton,
-//   Menu,
-//   MenuItem
-// } from '@mui/material';
-// import { Link } from 'react-router-dom';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faAlarmClock } from '@fortawesome/free-solid-svg-icons';
-
-// function MainHeader({container,mobileOpen,drawer,handleDrawerTransitionEnd,handleDrawerClose}) {
-//   const drawerWidth = 240;
-//   const [anchorEl, setAnchorEl] = useState(null);
-//   const [anchorE2, setAnchorE2] = useState(null);
-//   const [anchorE3, setAnchorE3] = useState(null);
-
-//   const handleMenuClick = (event) => {
-//     setAnchorEl(event.currentTarget);
-//   };
-
-//   const handleMenuClick2 = (event) => {
-//     setAnchorE2(event.currentTarget);
-//   };
-//    const handleMenuClick3 = (event) => {
-//     setAnchorE3(event.currentTarget);
-//   };
-
-
-//   const handleClose = () => {
-//     setAnchorEl(null);
-//   };
-
-//    const handleClose2 = () => {
-//     setAnchorE2(null);
-//   };
-//   const handleClose3 = () => {
-//     setAnchorE3(null);
-//   };
-
-
-//   return (
-//     <AppBar position="static" color="#FFA500" sx={{ backgroundColor: '#FFA500' }}>
-//       <Toolbar sx={{ minHeight: '48px !important' }}>
-//         <IconButton edge="start" color="inherit" aria-label="menu" >
-//           <FontAwesomeIcon icon={faAlarmClock} size="small" />
-//         </IconButton>
-//         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-//           Time Sheet
-//         </Typography>
-//         {/* <Button component={Link} to="/timesheet/home" color='white'>Home</Button> */}
-//         {/* <Button component={Link} to="/timesheet/day-plan" color='white'>TIME SHEET</Button> */}
-//         <Button color="inherit" onClick={handleMenuClick3}>
-//           Timesheets
-//         </Button>
-//         <Menu
-//           anchorEl={anchorE3}
-//           open={Boolean(anchorE3)}
-//           onClose={handleClose3}
-//         >
-//           <MenuItem onClick={handleClose3} component={Link} to="/timesheet/day-plan">
-//             Employee
-//           </MenuItem>
-//           <MenuItem onClick={handleClose3} component={Link} to="/timesheet/rl-timesheets">
-//             RL
-//           </MenuItem>
-//           <MenuItem onClick={handleClose3} component={Link} to="/timesheet/manager-timesheets">
-//             Manager
-//           </MenuItem>
-
-// </Menu>
-//          {/* <Button component={Link} to="/timesheet/tasks" color='white'>Tasks</Button> */}
-// <Button color="inherit" onClick={handleMenuClick2}>
-//           Tasks
-//         </Button>
-//         <Menu
-//           anchorEl={anchorE2}
-//           open={Boolean(anchorE2)}
-//           onClose={handleClose2}
-//         >
-//           <MenuItem onClick={handleClose2} component={Link} to="/timesheet/tasks">
-//             Employee
-//           </MenuItem>
-//           <MenuItem onClick={handleClose2} component={Link} to="/timesheet/rl-tasks">
-//             RL
-//           </MenuItem>
-//           <MenuItem onClick={handleClose2} component={Link} to="/timesheet/manager">
-//             Manager
-//           </MenuItem>
-
-// </Menu>
-//         <Button color="inherit" onClick={handleMenuClick}>
-//           Configuration
-//         </Button>
-//         <Menu
-//           anchorEl={anchorEl}
-//           open={Boolean(anchorEl)}
-//           onClose={handleClose}
-//         >
-//           <MenuItem onClick={handleClose} component={Link} to="/timesheet/user-registration">
-//             User Registration
-//           </MenuItem>
-//           <MenuItem onClick={handleClose} component={Link} to="/timesheet/department">
-//             Department
-//           </MenuItem>
-//           <MenuItem onClick={handleClose} component={Link} to="/timesheet/designation">
-//             Designation
-//           </MenuItem>
-//            <MenuItem onClick={handleClose} component={Link} to="/timesheet/projects">
-//             Projects
-//           </MenuItem>
-//         </Menu>
-//       </Toolbar>
-//       <Box
-//         component="nav"
-//         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-//         aria-label="mailbox folders"
-//       >
-//         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-//         <Drawer
-//           container={container}
-//           variant="temporary"
-//           open={mobileOpen}
-//           onTransitionEnd={handleDrawerTransitionEnd}
-//           onClose={handleDrawerClose}
-//           sx={{
-//             display: { xs: 'block', sm: 'none' },
-//             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-//           }}
-//           slotProps={{
-//             root: {
-//               keepMounted: true, // Better open performance on mobile.
-//             },
-//           }}
-//         >
-//           {drawer}
-//         </Drawer>
-//         <Drawer
-//           variant="permanent"
-//           sx={{
-//             display: { xs: 'none', sm: 'block' },
-//             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-//           }}
-//           open
-//         >
-//           {drawer}
-//         </Drawer>
-//       </Box>
-//     </AppBar>
-    
-//   );
-// }
-
-// export default MainHeader;

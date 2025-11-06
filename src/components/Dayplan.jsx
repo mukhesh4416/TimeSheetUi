@@ -36,10 +36,10 @@ function Dayplan() {
   params: { userId: 3 }, 
 });
 
-const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQuery({
-  url: timesheetService.get.UserTimesheet,
-  params: { userId: 3 }, 
-});
+// const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQuery({
+//   url: timesheetService.get.UserTimesheet,
+//   params: { userId: 3 }, 
+// });
 
   const [paramsApi] = useParamsApiCallMutation();
   const [postAPi] = usePostApiCallMutation();
@@ -49,18 +49,26 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
   const [filterText, setFilterText] = useState();
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [ timesheetPayload, setTimesheetPayload] = useState( {
+            "userId" : 3,
+            "monthYear" : new Date().toISOString().slice(0, 7)
+          })
+    const [selectedMonth, setSelectedMonth] = useState("2025-11");
 
-//  function addData(){
-
-//  setNewData(prevData => ({
-//       ...prevData, downTeamList, 
-//     }));
-//     console.log(downTeamList);
-//     console.log(newData)
-
-//  }
-
-//  addData();
+ const {data:timesheetList, refetch:fetchTimesheets } = useGetApiCallWithParamsQuery({ url:timesheetService.get.UserTimesheet, params:timesheetPayload});
+  useEffect(() => {
+  
+    if (selectedMonth) {
+        const payload = {
+          "userId" : 3,
+          "monthYear" : selectedMonth,
+        }
+      setTimesheetPayload(payload)
+      fetchTimesheets()
+    
+  
+  }
+},[selectedMonth]);
 
   const coreValidations = new CoreValidations()
   const dayPlanValidations = yup.object().shape({
@@ -185,10 +193,10 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
     timesheetFormik.resetForm();
     timesheetFormik.setValues({
       timesheetId : data.timesheetId,
-      taskName:data.taskName,
+      taskId : data.taskId,
+     // taskName:data.taskId,
      // projectName: data.projectName,
      // assignedBy: data.assignedBy,
-      taskId:data.taskId,
      // taskUId:data.taskUId,
       startTime: data.startTime,
       endTime: data.endTime,
@@ -325,23 +333,20 @@ const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQ
   return (
     <>
       <Grid container spacing={2} sx={{ p: 1, alignItems: "center",mt: '68px', ml: '240px', }}>
-        <Grid item size={5}>
+        <Grid item size={6}>
           <Typography variant="h6">Time sheet</Typography>
         </Grid>
-        <Grid item size={2}>
-          {/* <form id="timesheet-form">
-            <DynamicForm formTemplate={timesheetForm} formFormik={timesheetFormik} />
-          </form> */}
-        </Grid>
-        <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+       
+        <Grid item size={6} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+           <CoreButton onClick={submitAllTimesheet}>Submit Timesheets</CoreButton>
            <CoreButton onClick={addtimesheet}>Add Timesheet</CoreButton> 
-          <GlobalFilter onFilterChange={setFilterText} />
-          {/* <CoreDatePicker/> */}
+          <GlobalFilter onFilterChange={setFilterText} onMonthChange={setSelectedMonth} />
+         
         </Grid>
       </Grid>
       <Box sx={{ px: 2 , ml: '240px'}}>
         <AgGridDataTable dtOptions={dtOptions} data={timesheetList} filterInput={filterText}  />
-        <Box sx={{ display: "flex", justifyContent: "center",mb: 4}}><CoreButton onClick={submitAllTimesheet}>Submit Timesheets</CoreButton></Box>
+        <Box sx={{ display: "flex", justifyContent: "center",mb: 4}}></Box>
         
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="md" fullWidth>

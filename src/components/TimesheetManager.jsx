@@ -1,4 +1,4 @@
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid,Autocomplete,TextField, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import timesheetService from '../shared/services/TimesheetService';
 import { useGetApiCallQuery, useParamsApiCallMutation, usePostApiCallMutation,  useDeleteApiCallMutation, useGetApiCallWithParamsQuery} from '../core/store/globalApi';
@@ -36,10 +36,10 @@ function TimesheetManager() {
   params: { userId: 2 }, 
 });
 
- const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQuery({
-  url: timesheetService.get.ManagerTimesheet,
-  params: { managerId: 1 }, 
-});
+//  const { data: timesheetList,refetch:fetchTimesheets } = useGetApiCallWithParamsQuery({
+//   url: timesheetService.get.ManagerTimesheet,
+//   params: { managerId: 1 }, 
+// });
 
   const [rejectform, setRejectForm] = useState(false);
   const [rejectTimesheet,setRejectTimesheet] = useState();
@@ -52,18 +52,36 @@ function TimesheetManager() {
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
    const [buttonStatus, setButtonStatus] = useState(true);
+   const [selectTeam,setSelectTeam] = useState();
+      const [selectDownTeam,setSelectDownTeam] = useState();
 
-//  function addData(){
+const [ timesheetPayload, setTimesheetPayload] = useState( {
+            "userId" : 0,
+            "reportingLevel" : 0,
+            "monthYear" : new Date().toISOString().slice(0, 7)
+          })
+    const [selectedMonth, setSelectedMonth] = useState("2025-11");
 
-//  setNewData(prevData => ({
-//       ...prevData, downTeamList, 
-//     }));
-//     console.log(downTeamList);
-//     console.log(newData)
+    
 
-//  }
-
-//  addData();
+ const {data:downTeam} = useGetApiCallWithParamsQuery({ url:timesheetService.get.getDownTeam, params:{"reportingLevel" : selectTeam}});
+  const {data:RLList } = useGetApiCallWithParamsQuery({ url:timesheetService.get.getRLList});
+ const {data:timesheetList, refetch:fetchTimesheets } = useGetApiCallWithParamsQuery({ url:timesheetService.get.ManagerTimesheet, params:timesheetPayload});
+  useEffect(() => {
+  
+    if (!selectedMonth && !selectTeam && !selectDownTeam) 
+      return
+        const payload = {
+          "userId" : selectDownTeam || 0,
+          "reportingLevel" : selectTeam || 0,
+          "monthYear" : selectedMonth || new Date().toISOString().slice(0, 7),
+        }
+      setTimesheetPayload(payload)
+      fetchTimesheets()
+    
+  
+  
+},[selectedMonth,selectTeam,selectDownTeam]);
 
   const coreValidations = new CoreValidations()
   const dayPlanValidations = yup.object().shape({
@@ -72,11 +90,15 @@ function TimesheetManager() {
 
   const dtOptions = {
     columnDefs: [
+        {field : "empCode",  headerName: "Employee Code" },
+      {field : "profileName",  headerName: "Employee Name" },
       { field: "taskName", headerName: "Task Name" },
        { field: "taskHours", headerName: "Task Hours" },
       { field: "projectName", headerName: "Project Name" },
       { field: "taskDescription", headerName: " Task Description" },
+        { field: "rlName", headerName: " RL Name" },
       { field: "assignedBy", headerName: "Assigned By" },
+      { field: "createdDate", headerName: "Created On" },
       { field: "startTime", headerName: "Start Date Time" },
       { field: "endTime", headerName: "End Date Time" },
       { field: "totalTime", headerName: "Total Time Taken" },
@@ -342,9 +364,72 @@ const approveTimesheet = (data) =>{
             <DynamicForm formTemplate={timesheetForm} formFormik={timesheetFormik} />
           </form> */}
         </Grid>
-        <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+        <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" ,gap:1 }}>
           {/* <CoreButton onClick={addtimesheet}>Add Timesheet</CoreButton> */}
-          <GlobalFilter onFilterChange={setFilterText} />
+
+          <Autocomplete
+                      sx={{
+    width: 200,
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 2,
+      backgroundColor: (theme) => theme.palette.background.paper,
+      '&.Mui-focused fieldset': {
+        borderColor: (theme) => theme.palette.primary.main,
+      },
+    },
+  }}
+                      options={RLList || []}
+                      getOptionLabel={(option) => option?.profileName || ""}
+                  
+                      value={RLList?.find((opt) => opt.userId === selectTeam) || null}
+                      onChange={(event, newValue) => {
+                        const selectedId = newValue?.userId || 0;
+                        setSelectTeam(selectedId);
+                        console.log( selectedId);
+                      }}
+                      isOptionEqualToValue={(option, value) => option.userId === value.userId}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Select RL"
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+          
+                   <Autocomplete
+
+                      sx={{
+    width: 200,
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 2,
+      backgroundColor: (theme) => theme.palette.background.paper,
+      '&.Mui-focused fieldset': {
+        borderColor: (theme) => theme.palette.primary.main,
+      },
+    },
+  }}
+                      options={downTeam || []}
+                      getOptionLabel={(option) => option?.profileName || ""}
+                  
+                      value={downTeam?.find((opt) => opt.userId === selectDownTeam) || null}
+                      onChange={(event, newValue) => {
+                        const selectedId = newValue?.userId || 0;
+                        setSelectDownTeam(selectedId);
+                        console.log( selectedId);
+                      }}
+                      isOptionEqualToValue={(option, value) => option.userId === value.userId}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Select Team"
+                          variant="outlined"
+                          size="small"
+                        />
+                      )}
+                    />
+          <GlobalFilter onFilterChange={setFilterText} onMonthChange={setSelectedMonth}/>
           {/* <CoreDatePicker/> */}
         </Grid>
       </Grid>

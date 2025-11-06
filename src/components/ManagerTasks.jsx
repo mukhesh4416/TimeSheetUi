@@ -1,4 +1,4 @@
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Autocomplete,TextField,Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { faEdit, faTrashAlt, faPlus, faPaperPlane, faCheckCircle, faThumbsUp, faClose } from "@fortawesome/free-solid-svg-icons";
 import timesheetService from '../shared/services/TimesheetService';
@@ -19,12 +19,14 @@ import Swal from "sweetalert2";
 
 function ManagerTasks() {
  
-  const { data: taskList, refetch:fetchTasks } = useGetApiCallWithParamsQuery({
-  url: timesheetService.get.ManagerTasks,
-  params: { managerId: 1 }, 
-});
+//   const { data: taskList, refetch:fetchTasks } = useGetApiCallWithParamsQuery({
+//   url: timesheetService.get.ManagerTasks,
+//   params: { managerId: 1 }, 
+// });
    
  const [rejectform, setRejectForm] = useState(false);
+   const [selectTeam,setSelectTeam] = useState();
+   const [selectDownTeam,setSelectDownTeam] = useState();
 const [rejectTask,setRejectTask] = useState();
   const [paramsApi] = useParamsApiCallMutation();
   const [postAPi] = usePostApiCallMutation();
@@ -42,17 +44,51 @@ const [exceptName, setExceptName] = useState(false);
   });
 
 
+ 
+
+ const [ taskPayload, setTaskPayload] = useState( {
+          "taskUId" : 0,
+          "reportingLevel":0,
+          "monthYear" : new Date().toISOString().slice(0, 7)
+        })
+  const [selectedMonth, setSelectedMonth] = useState("2025-11");
+
+
+
+
+ const {data:downTeam} = useGetApiCallWithParamsQuery({ url:timesheetService.get.getDownTeam, params:{"reportingLevel" : selectTeam}});
+  const {data:RLList } = useGetApiCallWithParamsQuery({ url:timesheetService.get.getRLList});
+  const {data:taskList, refetch:fetchTasks } = useGetApiCallWithParamsQuery({ url:timesheetService.get.ManagerTasks, params:taskPayload});
+  useEffect(() => {
+
+    if (selectedMonth) {
+        const payload = {
+          "taskUId" : selectDownTeam || 0,
+          "reportingLevel" : selectTeam || 0,
+          "monthYear" : selectedMonth ||  new Date().toISOString().slice(0, 7),
+        }
+      setTaskPayload(payload)
+      fetchTasks()
+    
+  
+  }
+},[selectedMonth, selectTeam , selectDownTeam]);
 
 
 
 
   const dtOptions = {
     columnDefs: [
+
+
+      {field : "empCode",  headerName: "Employee Code" },
+      {field : "profileName",  headerName: "Employee Name" },
       { field: "taskName", headerName: "Task Name" },
       { field: "projectName", headerName: "Project Name" },
     //  { field: "assignedTo", headerName: "Assigned By" },
       { field: "taskDescription", headerName: "Task Description" },
       { field: "taskHours", headerName: "Task Hours" },
+       {field : "rlName",  headerName: "RL Name" },
       { field: "createdBy", headerName: "Submitted By" },
       {
         headerName: "Actions",
@@ -317,9 +353,71 @@ const [exceptName, setExceptName] = useState(false);
         <Grid item size={2}>
           {}
         </Grid>
-        <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-          {/* <CoreButton onClick={addTasks}>Add Task</CoreButton> */}
-          <GlobalFilter onFilterChange={setFilterText} />
+        <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" ,gap: 1}}>
+          
+          <Autocomplete
+           sx={{
+    width: 200,
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 2,
+      backgroundColor: (theme) => theme.palette.background.paper,
+      '&.Mui-focused fieldset': {
+        borderColor: (theme) => theme.palette.primary.main,
+      },
+    },
+  }}
+            options={RLList || []}
+            getOptionLabel={(option) => option?.profileName || ""}
+        
+            value={RLList?.find((opt) => opt.userId === selectTeam) || null}
+            onChange={(event, newValue) => {
+              const selectedId = newValue?.userId || 0;
+              setSelectTeam(selectedId);
+              console.log( selectedId);
+            }}
+            isOptionEqualToValue={(option, value) => option.userId === value.userId}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select RL"
+                variant="outlined"
+                size="small"
+              />
+            )}
+          />
+
+         <Autocomplete
+          sx={{
+    width: 200,
+    '& .MuiOutlinedInput-root': {
+      borderRadius: 2,
+      backgroundColor: (theme) => theme.palette.background.paper,
+      '&.Mui-focused fieldset': {
+        borderColor: (theme) => theme.palette.primary.main,
+      },
+    },
+  }}
+            options={downTeam || []}
+            getOptionLabel={(option) => option?.profileName || ""}
+        
+            value={downTeam?.find((opt) => opt.userId === selectDownTeam) || null}
+            onChange={(event, newValue) => {
+              const selectedId = newValue?.userId || 0;
+              setSelectDownTeam(selectedId);
+              console.log( selectedId);
+            }}
+            isOptionEqualToValue={(option, value) => option.userId === value.userId}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Team"
+                variant="outlined"
+                size="small"
+              />
+            )}
+          />
+
+          <GlobalFilter onFilterChange={setFilterText} onMonthChange={setSelectedMonth} />
           
         </Grid>
       </Grid>

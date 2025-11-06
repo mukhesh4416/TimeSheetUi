@@ -24,6 +24,8 @@ ModuleRegistry.registerModules([
   QuickFilterModule,
 ]);
 
+
+
 const AgGridDataTable = ({dtOptions,data = [],filterInput=""}) => {
   const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
@@ -56,7 +58,7 @@ const AgGridDataTable = ({dtOptions,data = [],filterInput=""}) => {
   },[filterInput])
 
   return (
-    <div style={{ height: "calc(100vh - 150px)", width: "100%" }}>
+    <div style={{ height: "calc(100vh - 250px)", width: "100%" }}>
       <div style={containerStyle}>
         <div style={gridStyle}>
           <AgGridReact

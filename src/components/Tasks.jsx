@@ -2,7 +2,7 @@ import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Paper, Ta
 import React, { useEffect, useState } from 'react'
 import { faEdit, faTrashAlt, faPlus, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import timesheetService from '../shared/services/TimesheetService';
-import { useGetApiCallQuery, useParamsApiCallMutation, usePostApiCallMutation, useDeleteApiCallMutation,useGetApiCallWithParamsQuery } from '../core/store/globalApi';
+import { useGetApiCallQuery, useParamsApiCallMutation, usePostApiCallMutation, useDeleteApiCallMutation,useGetApiCallWithParamsQuery ,} from '../core/store/globalApi';
 import CoreButton from '../core/CoreButton';
 import CoreIconButton from '../core/CoreIconButton';
 import { useFormik } from 'formik';
@@ -15,33 +15,48 @@ import DynamicForm from '../core/DynamicForm';
 import userService from '../shared/services/UserService';
 import { GlobalConfirmation } from '../core/GlobalConfirmation';
 import Swal from "sweetalert2";
+import "../styles.scss";
+
+
 
 
 function Tasks() {
   const userData = JSON.parse(sessionStorage.getItem("userData"));
 
+
+
    const { data: tasksList, refetch:fetchTasks } = useGetApiCallWithParamsQuery({
   url: timesheetService.get.UserTasks,
   params: { taskUId: 3 }, 
 });
+
+
+
+
+
+
   
 
   const {data:projectList} = useGetApiCallQuery(userService.get.getAllProjects);
    const {data:rlList} = useGetApiCallQuery("http://10.100.72.249:8080/timeSheet.service/getAllRLList");
-  const {data:downTeamList} = useGetApiCallQuery(`${userService.get.getDownTeamList}+${userData?.uid}`);
-  const {data:usersList} = useGetApiCallQuery(userService.get.getAllUsersList);
+ // const {data:downTeamList} = useGetApiCallQuery(`${userService.get.getDownTeamList}+${userData?.uid}`);
+  //const {data:usersList} = useGetApiCallQuery(userService.get.getAllUsersList);
   //const {data:tasksList,refetch:fetchTasks} = useGetApiCallQuery(timesheetService.get.getTaskList);
 
   const [paramsApi] = useParamsApiCallMutation();
   const [postAPi] = usePostApiCallMutation();
    const [deleteApi] = useDeleteApiCallMutation();
- // const [getApi] = useGetApiCallQuery(timesheetService.get.getTaskList);
   const [buttonDisable, setButtonDisable] = useState({});
 const [exceptName, setExceptName] = useState(false);
-  const [taskList, setTaskList] = useState([])
+  const [taskData, setTaskData] = useState([])
   const [filterText, setFilterText] = useState();
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [ taskPayload, setTaskPayload] = useState( {
+          "taskUId" : 3,
+          "monthYear" : new Date().toISOString().slice(0, 7)
+        })
+  const [selectedMonth, setSelectedMonth] = useState("2025-11");
   const coreValidations = new CoreValidations()
   const dayPlanValidations = yup.object().shape({
     taskName: coreValidations.stringValidation(2, 50),
@@ -54,6 +69,27 @@ const [exceptName, setExceptName] = useState(false);
     taskName: coreValidations.duplicateValidation(2,50,tasksList,'taskName',exceptName),
   });
 
+  const {data:taskDataa, refetch:fetchTasksData } = useGetApiCallWithParamsQuery({ url:timesheetService.get.getAllTaskUser, params:taskPayload});
+  useEffect(() => {
+  
+    if (selectedMonth) {
+        const payload = {
+          "taskUId" : 3,
+          "monthYear" : selectedMonth,
+        }
+      setTaskPayload(payload)
+      fetchTasksData()
+    
+  
+  }
+},[selectedMonth]);
+
+// useEffect(() => {
+//   if (selectedMonth) {
+//     fetchTasksByMonth(selectedMonth);
+//   }
+// }, [selectedMonth]);
+
   const dtOptions = {
     columnDefs: [
       { field: "taskName", headerName: "Task Name" },
@@ -62,6 +98,8 @@ const [exceptName, setExceptName] = useState(false);
       { field: "taskDescription", headerName: "Task Description" },
       { field: "taskHours", headerName: "Task Hours" },
       { field: "createdBy", headerName: "Created By" },
+       { field: "taskDate", headerName: " Task Date" },
+      
      
       {
         headerName: "Actions",
@@ -94,24 +132,18 @@ const [exceptName, setExceptName] = useState(false);
         field: "status",
         minWidth: 150,
         cellRenderer: (params) => {
-
-        
-
-            let statussubmit = (Number(params.data.submitStatus ) ===0) ;
-            let approveStatus= (Number(params.data.approveStatus ) ===0) ;
-            let verifyStatus = (Number(params.data.approveStatus ) ===0) ;
-            let rejectStatus = (Number(params.data.rejectStatus ) ===0) ;
-          
-      
-         
-
-          return(
-        
-          <>
-          
-            <div style={{color:!statussubmit && !verifyStatus && !approveStatus && rejectStatus ?"green": (!rejectStatus ? "red":"blue")}} >{ !statussubmit && !verifyStatus && !approveStatus && rejectStatus? "Approved" : (!rejectStatus ? "Rejected":"Pending")}</div>
-          </>
-        );
+          const data = params.data
+          if(+data.rejectStatus){
+            return <div className=' status rejected'>Rejected</div>
+          }else if(!+data.submitStatus){
+            return <div className='status pending'>Pending</div>
+          }else if(!+data.verifyStatus){
+            return <div className='status submitted'>Submitted</div>
+          }else if(!+data.approveStatus){
+            return <div className='status verified'>Verified</div>
+          }else{
+            return <div className='status approved'>Approved</div>
+          }
       },
       },
      
@@ -123,9 +155,9 @@ const [exceptName, setExceptName] = useState(false);
         uid: userData?.uid,
       },
     });
-  const userForm = [
-    { field: "uId", label: "Employee Name", type: "SearchSelect", options:downTeamList, keyName:"profileName", valueName:"uid" }
-  ]
+  // const userForm = [
+  //   { field: "uId", label: "Employee Name", type: "SearchSelect", options:downTeamList, keyName:"profileName", valueName:"uid" }
+  // ]
 
   const TasksForm = [
     { field: "taskName", label: "Task Name", type: "Text" },
@@ -138,8 +170,8 @@ const [exceptName, setExceptName] = useState(false);
   const TasksFormik = useFormik({
     initialValues: {
       taskName: "",
+      assignedBy:"",
       projectName: "",
-      assignedBy: "",
       taskHours: "",
       taskDescription: "",
       taskUId:"",
@@ -149,8 +181,28 @@ const [exceptName, setExceptName] = useState(false);
     validationSchema: taskValidations,
   });
 
+
+  
+
+const fetchTasksByMonth = async (month) => {
+
+  const payload = {
+    "taskUId" : 3,
+    "monthYear" : month,
+    
+  }
+
+  // setTaskPayload(payload)
+
+    // const res = await getApi({ url:timesheetService.get.getAllTaskUser, params:payload});
+    // debugger
+    // setTaskData(res);
+    // console.log(taskData)
+};
+
   const addTasks = () => {
-    //console.log(tasksList);
+   // console.log(taskData);
+   console.log(selectedMonth)
     TasksFormik.resetForm();
     setEditFlag(false)
     setShowModal(true)
@@ -158,14 +210,17 @@ const [exceptName, setExceptName] = useState(false);
 
   const editTasks = (data) => {
 
-    console.log(tasksList),
+    console.log(taskList)
     setExceptName(data.taskName)
     TasksFormik.resetForm();
+    console.log(data)
+    console.log(rlList)
     TasksFormik.setValues({
+       assignedBy: data.assignedBy,
       projectName : data.projectId,
       taskName: data.taskName,
       taskId:data.taskId,
-      assignedBy: data.assignedBy,
+     
       taskHours: data.taskHours,
       taskUId:data.taskUId,
       taskDescription: data.taskDescription
@@ -292,12 +347,12 @@ const [exceptName, setExceptName] = useState(false);
         </Grid>
         <Grid item size={5} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
           <CoreButton onClick={addTasks}>Add Task</CoreButton>
-          <GlobalFilter onFilterChange={setFilterText} />
+          <GlobalFilter onFilterChange={setFilterText} onMonthChange={setSelectedMonth} />
           
         </Grid>
       </Grid>
       <Box sx={{ px: 2 , ml: '240px'}}>
-        <AgGridDataTable dtOptions={dtOptions} data={tasksList} filterInput={filterText} />
+        <AgGridDataTable dtOptions={dtOptions} data={taskDataa} filterInput={filterText} />
       </Box>
       <Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="md" fullWidth>
         <DialogTitle>{editFlag ? "Edit Task" : "Add Task"}</DialogTitle>

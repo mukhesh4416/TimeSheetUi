@@ -21,3 +21,12 @@
 }
 
 /* Dialog CSS ends */
+
+.status {
+  font-weight: 600;
+  &.rejected { color: $rejected; }
+  &.pending { color: $pending; }
+  &.submitted { color: $submitted; }
+  &.verified { color: $verified; }
+  &.approved { color: $approved; }
+}

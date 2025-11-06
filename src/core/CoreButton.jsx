@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 
 import React from 'react'
 
-function CoreButton({ children, onClick, variant = "contained", color = "primary", size = "small" }) {
+function CoreButton({ children, onClick, variant = "contained", color = "primary", size = "medium" }) {
     return (
         <Button
         sx = {{m:1}}

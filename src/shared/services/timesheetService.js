@@ -11,11 +11,13 @@ const timesheetService = {
          "ManagerTasks":baseUrl + 'getAllTasksToManager',
          "getAllApprovedTasksList" : baseUrl + 'getAllApprovedTasksList',
          "getAllSubmittedTimesheets" : baseUrl + 'getAllSubmittedTimeSheetList',
-         "UserTasks": baseUrl + 'getAllTasksToUser',
+         "UserTasks": baseUrl + 'getAllTasksList',
          "ManagerTimesheet": baseUrl + 'getTimeSheetListForManager',
          "RLTimesheet" : baseUrl + 'getTimeSheetListForRL',
          "UserTimesheet" : baseUrl + 'getTimeSheetListById',
-        
+         "getAllTaskUser" : baseUrl + 'getAllTasksToUser',
+         "getDownTeam" : baseUrl + 'getDownTeam',
+         "getRLList": baseUrl + 'getAllRLList',
 
     },
 
@@ -40,6 +42,9 @@ const timesheetService = {
            "rejectTaskManager" : baseUrl + 'reVerifyTaskByManager',
               "rejectTimesheetRL" : baseUrl + 'reVerifyTimeSheetByRL',
            "rejectTimesheetManager" : baseUrl + 'reVerifyTimeSheetByManager',
+            "getDownTeam" : baseUrl + 'getDownTeam',
+            "getRLList": baseUrl + 'getAllRLList',
+
            
          
         
