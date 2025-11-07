@@ -5,7 +5,6 @@ import React from 'react';
 
 function CoreSearchSelect({
   field,
-  autoSubmit = false,
   label,
   formFormik,
   options = [],
@@ -36,14 +35,6 @@ function CoreSearchSelect({
         setFieldValue(rel.formKey, newValue[rel.sourceKey] || '');
       });
 
-
- if (autoSubmit) {
-        handleSubmit();
-      }
-     else {
-      setFieldValue(field, '');
-      relatedFields.forEach((rel) => setFieldValue(rel.formKey, ''));
-    }
 
 
     } else {

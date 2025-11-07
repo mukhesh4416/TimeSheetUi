@@ -42,6 +42,7 @@ function Projects() {
 
   const projectForm = [
     { field: "projectName", label: "Project Name", type: "Text" },
+   // { field: "createdBy", label: "Project Manager", type: "Text" },
      { field: "startDate", label: "Start Date", type: "Date" },
      { field: "endDate", label: "End Date", type: "Date" }
   ]
@@ -49,6 +50,7 @@ function Projects() {
   const projectFormik = useFormik({
     initialValues: {
       projectName: "",
+     // createdBy: "",
       startDate:"",
       endDate:"",
       
@@ -59,6 +61,7 @@ function Projects() {
   const dtOptions = {
     columnDefs: [
       { field: "projectName", headerName: "Project Name", minWidth: 170 },
+       { field: "createdBy", headerName: "Manager Name", minWidth: 170 },
       {
       field: "startDate",
       headerName: "Start Date",
@@ -136,6 +139,7 @@ function Projects() {
       const payload = {
         "projectId": formVal.projectId,
         "projectName": formVal.projectName,
+       // "createdBy" : formVal.createdBy,
         "startDate":formVal.startDate,
         "endDate":formVal.endDate,
         "createdBy": userData?.profileName,

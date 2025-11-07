@@ -125,25 +125,38 @@ const [rejectTimesheet,setRejectTimesheet] = useState();
         headerName: "Status",
         field: "status",
         minWidth: 150,
-        cellRenderer: (params) => {
+          cellRenderer: (params) => {
+
+
+           
+          const data = params.data
+       if(+data.submitStatus && !+data.verifyStatus && !+data.approveStatus){
+            return <div className='status submitted'>Submitted</div>
+          }else if(+data.verifyStatus && +data.submitStatus && !+data.approveStatus){
+            return <div className='status verified'>Verified</div>
+          }else  if(+data.verifyStatus && +data.submitStatus && +data.approveStatus){
+            return <div className='status approved'>Approved</div>
+          }
+        }
+      //   cellRenderer: (params) => {
 
         
 
-            let statussubmit = (Number(params.data.verifyStatus ) ===0) ;
+      //       let statussubmit = (Number(params.data.verifyStatus ) ===0) ;
             
           
       
          
 
-          return(
+      //     return(
         
-          <>
+      //     <>
           
-            <div style={{color:!statussubmit?"green":"red"}} >{ !statussubmit ? "Verified" : "Pending"}</div>
+      //       <div style={{color:!statussubmit?"green":"red"}} >{ !statussubmit ? "Verified" : "Pending"}</div>
             
-          </>
-        );
-      },
+      //     </>
+      //   );
+      // },
 
 
       

@@ -116,25 +116,33 @@ const [exceptName, setExceptName] = useState(false);
         field: "status",
         minWidth: 150,
         cellRenderer: (params) => {
+          const data = params.data
+          if(!+data.verifyStatus){
+            return <div className='status verified'>Verified</div>
+          }else{
+            return <div className='status approved'>Approved</div>
+          }
+      },
+      //   cellRenderer: (params) => {
 
         
 
-            //let statussubmit = (Number(params.data.submitStatus ) ===0) ;
-            let approveStatus= (Number(params.data.approveStatus ) ===0) ;
-            let verifyStatus = (Number(params.data.approveStatus ) ===0) ;
+      //       //let statussubmit = (Number(params.data.submitStatus ) ===0) ;
+      //       let approveStatus= (Number(params.data.approveStatus ) ===0) ;
+      //       let verifyStatus = (Number(params.data.approveStatus ) ===0) ;
 
           
       
          
 
-          return(
+      //     return(
         
-          <>
+      //     <>
           
-            <div style={{color:!verifyStatus && !approveStatus?"green":"red"}} >{ !verifyStatus && !approveStatus ? "Approved" : "Pending"}</div>
-          </>
-        );
-      },
+      //       <div style={{color:!verifyStatus && !approveStatus?"green":"red"}} >{ !verifyStatus && !approveStatus ? "Approved" : "Pending"}</div>
+      //     </>
+      //   );
+      // },
       },
 
     ]

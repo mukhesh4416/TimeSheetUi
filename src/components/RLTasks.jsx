@@ -121,15 +121,11 @@ useEffect(() => {
 
            
           const data = params.data
-          if(+data.rejectStatus){
-            return <div className=' status rejected'>Rejected</div>
-          }else if(!+data.submitStatus){
-            return <div className='status pending'>Pending</div>
-          }else if(!+data.verifyStatus){
+       if(+data.submitStatus && !+data.verifyStatus && !+data.approveStatus){
             return <div className='status submitted'>Submitted</div>
-          }else if(!+data.approveStatus){
+          }else if(+data.verifyStatus && +data.submitStatus && !+data.approveStatus){
             return <div className='status verified'>Verified</div>
-          }else{
+          }else if(+data.verifyStatus && +data.submitStatus && +data.approveStatus){
             return <div className='status approved'>Approved</div>
           }
       

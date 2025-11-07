@@ -129,25 +129,33 @@ const [ timesheetPayload, setTimesheetPayload] = useState( {
         headerName: "Status",
         field: "status",
         minWidth: 150,
-        cellRenderer: (params) => {
+         cellRenderer: (params) => {
+          const data = params.data
+          if(+data.verifyStatus && +data.submitStatus && !+data.approveStatus){
+            return <div className='status verified'>Verified</div>
+          }else if(+data.verifyStatus && +data.submitStatus && +data.approveStatus) {
+            return <div className='status approved'>Approved</div>
+          }
+      },
+      //   cellRenderer: (params) => {
 
         
 
-            let statussubmit = (Number(params.data.approveStatus ) ===0) ;
+      //       let statussubmit = (Number(params.data.approveStatus ) ===0) ;
             
           
       
          
 
-          return(
+      //     return(
         
-          <>
+      //     <>
           
-            <div style={{color:!statussubmit?"green":"red"}} >{ !statussubmit ? "Approved" : "Pending"}</div>
+      //       <div style={{color:!statussubmit?"green":"red"}} >{ !statussubmit ? "Approved" : "Pending"}</div>
             
-          </>
-        );
-      },
+      //     </>
+      //   );
+      // },
 
 
       

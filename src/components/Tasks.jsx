@@ -135,13 +135,13 @@ const [exceptName, setExceptName] = useState(false);
           const data = params.data
           if(+data.rejectStatus){
             return <div className=' status rejected'>Rejected</div>
-          }else if(!+data.submitStatus){
+          }else if(!+data.submitStatus && !+data.verifyStatus && !+data.approveStatus){
             return <div className='status pending'>Pending</div>
-          }else if(!+data.verifyStatus){
+          }else if(+data.submitStatus  && !+data.verifyStatus && !+data.approveStatus ){
             return <div className='status submitted'>Submitted</div>
-          }else if(!+data.approveStatus){
+          }else if(+data.verifyStatus && !+data.approveStatus && +data.submitStatus){
             return <div className='status verified'>Verified</div>
-          }else{
+          }else if(+data.verifyStatus && +data.approveStatus && +data.submitStatus){
             return <div className='status approved'>Approved</div>
           }
       },
@@ -210,13 +210,13 @@ const fetchTasksByMonth = async (month) => {
 
   const editTasks = (data) => {
 
-    console.log(taskList)
+    //console.log(taskList)
     setExceptName(data.taskName)
     TasksFormik.resetForm();
     console.log(data)
     console.log(rlList)
     TasksFormik.setValues({
-       assignedBy: data.assignedBy,
+       assignedBy: data.rlName,
       projectName : data.projectId,
       taskName: data.taskName,
       taskId:data.taskId,
@@ -256,7 +256,7 @@ const fetchTasksByMonth = async (month) => {
           const res = await postAPi({ url:timesheetService.post.saveTask, data:payload})
          
           if (res.data) {
-             fetchTasks();
+             fetchTasksData();
             setShowModal(false);
             Swal.fire( editFlag ? 'Updated!' :'Saved!', `Task ${editFlag ? 'Updated' :'Saved'} Successfully`, 'success');
              setShowModal(false);
@@ -296,7 +296,7 @@ const fetchTasksByMonth = async (month) => {
       successMsg: "Submitted",
       onConfirm: async () => {
       await paramsApi({ url: timesheetService.params.submitTask, data : payload })
-      fetchTasks();
+      fetchTasksData();
         setShowModal(false);
       },
     });
@@ -311,7 +311,7 @@ const fetchTasksByMonth = async (month) => {
       successMsg: "Deleted",
       onConfirm: async () => {
         await deleteApi({ url: timesheetService.delete.deleteTask, data: { actionMode: "Delete" , taskId: data.taskId } })
-        fetchTasks();
+        fetchTasksData();
         setShowModal(false);
       },
     });

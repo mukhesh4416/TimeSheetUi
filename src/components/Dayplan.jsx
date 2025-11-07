@@ -110,25 +110,41 @@ function Dayplan() {
         field: "status",
         minWidth: 150,
         cellRenderer: (params) => {
+          const data = params.data
+          if(+data.rejectStatus){
+            return <div className=' status rejected'>Rejected</div>
+          }else if(!+data.submitStatus && !+data.verifyStatus && !+data.approveStatus){
+            return <div className='status pending'>Pending</div>
+          }else if(+data.submitStatus  && !+data.verifyStatus && !+data.approveStatus ){
+            return <div className='status submitted'>Submitted</div>
+          }else if(+data.verifyStatus && !+data.approveStatus && +data.submitStatus){
+            return <div className='status verified'>Verified</div>
+          }else if(+data.verifyStatus && +data.approveStatus && +data.submitStatus){
+            return <div className='status approved'>Approved</div>
+          }
+      },
+      
+     
+      //   cellRenderer: (params) => {
 
         
 
-            let statussubmit = (Number(params.data.submitStatus ) ===0) ;
-             let verifyStatus = (Number(params.data.verifyStatus ) ===0) ;
-              let approveStatus = (Number(params.data.approveStatus ) ===0) ;
-            let rejectStatus = (Number(params.data.rejectStatus ) ===0) ;
+      //       let statussubmit = (Number(params.data.submitStatus ) ===0) ;
+      //        let verifyStatus = (Number(params.data.verifyStatus ) ===0) ;
+      //         let approveStatus = (Number(params.data.approveStatus ) ===0) ;
+      //       let rejectStatus = (Number(params.data.rejectStatus ) ===0) ;
           
       
          
 
-          return(
+      //     return(
         
-          <>
-       <div style={{color:!statussubmit && !verifyStatus && !approveStatus && rejectStatus ?"green": (!rejectStatus ? "red":"blue")}} >{ !statussubmit && !verifyStatus && !approveStatus && rejectStatus? "Approved" : (!rejectStatus ? "Rejected":"Pending")}</div>
+      //     <>
+      //  <div style={{color:!statussubmit && !verifyStatus && !approveStatus && rejectStatus ?"green": (!rejectStatus ? "red":"blue")}} >{ !statussubmit && !verifyStatus && !approveStatus && rejectStatus? "Approved" : (!rejectStatus ? "Rejected":"Pending")}</div>
             
-          </>
-        );
-      },
+      //     </>
+      //   );
+      // },
 
 
       
@@ -190,17 +206,15 @@ function Dayplan() {
   }
 
   const edittimesheet = (data) => {
+    console.log(data)
     timesheetFormik.resetForm();
+    console.log(data.taskName)
     timesheetFormik.setValues({
-      timesheetId : data.timesheetId,
       taskId : data.taskId,
-     // taskName:data.taskId,
-     // projectName: data.projectName,
-     // assignedBy: data.assignedBy,
-     // taskUId:data.taskUId,
+      timesheetId : data.timesheetId,
       startTime: data.startTime,
       endTime: data.endTime,
-      //taskDescription: data.taskDescription
+      
     })
     setEditFlag(true)
     setShowModal(true);
