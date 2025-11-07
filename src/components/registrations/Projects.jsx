@@ -169,7 +169,7 @@ function Projects() {
           <Typography variant="h6">Project List</Typography>
         </Grid>
         <Grid item size={6} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-          <CoreButton onClick={addProject}>Add Project</CoreButton>
+          <CoreButton onClick={addProject}>Add</CoreButton>
           <GlobalFilter onFilterChange={setFilterText} />
         </Grid>
       </Grid>

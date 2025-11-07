@@ -23,7 +23,7 @@ function ManagerTasks() {
 //   url: timesheetService.get.ManagerTasks,
 //   params: { managerId: 1 }, 
 // });
-   
+   const loginData = JSON.parse(sessionStorage.getItem("userData"));
  const [rejectform, setRejectForm] = useState(false);
    const [selectTeam,setSelectTeam] = useState();
    const [selectDownTeam,setSelectDownTeam] = useState();
@@ -49,6 +49,7 @@ const [exceptName, setExceptName] = useState(false);
  const [ taskPayload, setTaskPayload] = useState( {
           "taskUId" : 0,
           "reportingLevel":0,
+          "managerId": loginData.userId,
           "monthYear" : new Date().toISOString().slice(0, 7)
         })
   const [selectedMonth, setSelectedMonth] = useState("2025-11");
@@ -63,6 +64,7 @@ const [exceptName, setExceptName] = useState(false);
 
     if (selectedMonth) {
         const payload = {
+          "managerId" : loginData.userId,
           "taskUId" : selectDownTeam || 0,
           "reportingLevel" : selectTeam || 0,
           "monthYear" : selectedMonth ||  new Date().toISOString().slice(0, 7),

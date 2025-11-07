@@ -13,6 +13,7 @@ import ManagerTasks from './components/ManagerTasks'
 import RLTasks from './components/RLTasks'
 import TimesheetRL from './components/TimesheetRL'
 import TimesheetManager from './components/TimesheetManager'
+import WelcomePage from './components/WelcomePage'
 
 function RouterConfig() {
   return (
@@ -22,6 +23,7 @@ function RouterConfig() {
           <Route path="forgot" element={<ForgotPassword />} />
           </Route>
           <Route path="/timesheet" element={<Timesheet/>}>
+          <Route index element={<WelcomePage />} />
             <Route path="day-plan" element={<Dayplan/>} />
             <Route path="tasks" element={<Tasks/>} />
             <Route path="department" element={<Department/>} />

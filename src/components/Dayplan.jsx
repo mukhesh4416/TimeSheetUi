@@ -19,6 +19,7 @@ import Swal from "sweetalert2";
 
 function Dayplan() {
   const userData = JSON.parse(sessionStorage.getItem("userData"));
+   const loginData = JSON.parse(sessionStorage.getItem("userData"));
   const [newData,setNewData] = useState(userData);
   
 
@@ -50,7 +51,7 @@ function Dayplan() {
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [ timesheetPayload, setTimesheetPayload] = useState( {
-            "userId" : 3,
+            "userId" : loginData.userId,
             "monthYear" : new Date().toISOString().slice(0, 7)
           })
     const [selectedMonth, setSelectedMonth] = useState("2025-11");
@@ -60,7 +61,7 @@ function Dayplan() {
   
     if (selectedMonth) {
         const payload = {
-          "userId" : 3,
+          "userId" : loginData.userId,
           "monthYear" : selectedMonth,
         }
       setTimesheetPayload(payload)
@@ -352,8 +353,8 @@ function Dayplan() {
         </Grid>
        
         <Grid item size={6} sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-           <CoreButton onClick={submitAllTimesheet}>Submit Timesheets</CoreButton>
-           <CoreButton onClick={addtimesheet}>Add Timesheet</CoreButton> 
+           <CoreButton onClick={submitAllTimesheet}>Submit </CoreButton>
+           <CoreButton onClick={addtimesheet}>Add </CoreButton> 
           <GlobalFilter onFilterChange={setFilterText} onMonthChange={setSelectedMonth} />
          
         </Grid>

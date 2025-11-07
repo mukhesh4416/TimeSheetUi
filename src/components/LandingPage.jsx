@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AppBar,
   Avatar,
@@ -17,60 +17,53 @@ import { faAlarmClock, faCogs, faDiagramProject, faFileCircleCheck, faProjectDia
 
 const drawerWidth = 240;
 
-function MainHeader({
+function LandingPage({
   container,
 
 }) {
 
-  const [employee,setEmployee] = useState(false);
+    const loginData = JSON.parse(sessionStorage.getItem("userData"));
+    console.log(loginData.role)
+   useEffect(() =>{
+
+
+if(loginData.role === "Employee"){
+
+    setEmployee(true);
+    setManager(false);
+    setRL(false);
+
+}else if(loginData.role === "Manager"){
+    setManager(true);
+    setEmployee(false);
+    setRL(false);
+
+    
+} else if(loginData.role === "Reporting Lead"){
+    setRL(true);
+    setManager(false);
+    setEmployee(false)
+}
+
+   },[])
+
+
+  const [employee,setEmployee] = useState(true);
    const [rl,setRL] = useState(false);
     const [manager,setManager] = useState(false);
 
   const [anchorE,setAnchorE] =useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [anchorE2, setAnchorE2] = useState(null);
-  const [anchorE3, setAnchorE3] = useState(null);
-
+  
   // Menu handlers
   const handleClick  = (event) => setAnchorE(event.currentTarget);
-  const handleMenuClick = (event) => setAnchorEl(event.currentTarget);
-  const handleMenuClick2 = (event) => setAnchorE2(event.currentTarget);
-  const handleMenuClick3 = (event) => setAnchorE3(event.currentTarget);
-
-  const handleClose1 = () => setAnchorE(null);
-  const handleClose = () => setAnchorEl(null);
-  const handleClose2 = () => setAnchorE2(null);
-  const handleClose3 = () => setAnchorE3(null);
-
-
-  const handleRL = () => {
-
-    setEmployee(false);
-    setManager(false);
-    setRL(true);
-  }
-
-   const handleManager = () => {
-
-    setEmployee(false);
-    setManager(true);
-    setRL(false);
-  }
-
-   const handleEmployee = () => {
-   setManager(false);
-    setRL(false);
-    setEmployee(true);
- 
-  }
-
+  
   return (
     <Box sx={{ display: 'flex' }}>
-      {/* ---------- Header ---------- */}
+      
       <AppBar
         position="fixed"
         sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1, // ensures header is above sidebar
+          zIndex: (theme) => theme.zIndex.drawer + 1, 
           backgroundColor: '#FFFFFF',
         }}
       >
@@ -81,12 +74,8 @@ function MainHeader({
           <Typography variant="h6" component="div" sx={{ flexGrow: 1,color:'#001F3F' ,fontWeight: 'bold', }}>
             Time Sheet
           </Typography>
-          <Button onClick={handleClick}>Profile</Button>
-           <Menu anchorEl={anchorE} open={Boolean(anchorE)} onClose={handleClose1}>
-          <MenuItem onClick={handleEmployee} >Employee</MenuItem>
-          <MenuItem onClick= {handleRL}>RL</MenuItem>
-          <MenuItem onClick={handleManager}>Manager</MenuItem>
-          </Menu>
+          <Button onClick={handleClick}>{loginData.profileName}</Button>
+          
           <IconButton
     onClick={(event) => setProfileAnchor(event.currentTarget)}
     sx={{ p: 0, ml: 2 }}
@@ -101,10 +90,6 @@ function MainHeader({
 
         </Toolbar>
       </AppBar>
-
-     
-
-
 
       <Drawer
         container={container}
@@ -185,10 +170,12 @@ function MainHeader({
           </Button> 
         </>}
       </Drawer>
+      
     </Box>
+    
   );
 }
 
-export default MainHeader;
+export default LandingPage;
 
 

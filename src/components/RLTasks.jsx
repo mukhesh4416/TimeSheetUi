@@ -25,7 +25,7 @@ function RLTasks() {
 //   params: { reportingLevelId: 2 }, 
 // });
    
- 
+  const loginData = JSON.parse(sessionStorage.getItem("userData"));
 const [rejectTask,setRejectTask] = useState();
   const [paramsApi] = useParamsApiCallMutation();
   const [postAPi] = usePostApiCallMutation();
@@ -46,13 +46,13 @@ const [exceptName, setExceptName] = useState(false);
 
  const [ taskPayload, setTaskPayload] = useState( {
           "taskUId" : 0,
-          "reportingLevel" : 2,
+          "reportingLevel" : loginData.userId,
           "monthYear" : new Date().toISOString().slice(0, 7)
         })
 
  const [ downteamPayload, setDownTeamPayload] = useState( {
         
-          "reportingLevel" : 2,
+          "reportingLevel" : loginData.userId,
           
         })
 

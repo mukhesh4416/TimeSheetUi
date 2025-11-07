@@ -58,7 +58,7 @@ const AgGridDataTable = ({dtOptions,data = [],filterInput=""}) => {
   },[filterInput])
 
   return (
-    <div style={{ height: "calc(100vh - 250px)", width: "100%" }}>
+    <div className = "ag-theme-alpine" style={{ height: "calc(100vh - 200px)", width: "100%" }}>
       <div style={containerStyle}>
         <div style={gridStyle}>
           <AgGridReact

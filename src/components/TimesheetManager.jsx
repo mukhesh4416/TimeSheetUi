@@ -19,6 +19,7 @@ import Swal from "sweetalert2";
 
 function TimesheetManager() {
   const userData = JSON.parse(sessionStorage.getItem("userData"));
+   const loginData = JSON.parse(sessionStorage.getItem("userData"));
   const [newData,setNewData] = useState(userData);
   
 
@@ -57,6 +58,7 @@ function TimesheetManager() {
 
 const [ timesheetPayload, setTimesheetPayload] = useState( {
             "userId" : 0,
+            "managerId" : loginData.userId,
             "reportingLevel" : 0,
             "monthYear" : new Date().toISOString().slice(0, 7)
           })
@@ -72,6 +74,7 @@ const [ timesheetPayload, setTimesheetPayload] = useState( {
     if (!selectedMonth && !selectTeam && !selectDownTeam) 
       return
         const payload = {
+          "managerId": loginData.userId,
           "userId" : selectDownTeam || 0,
           "reportingLevel" : selectTeam || 0,
           "monthYear" : selectedMonth || new Date().toISOString().slice(0, 7),

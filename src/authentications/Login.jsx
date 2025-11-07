@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
+import Swal from 'sweetalert2';
 
 function Login() {
 
@@ -75,13 +76,19 @@ const emailValidations = yup.object().shape({
                 empCode: loginFormik.values.empCode,
                 password: loginFormik.values.password
             }
-            const res = await axios.post(baseUrl + `user/userLogin`, obj)
+
+            try{
+            const res = await axios.post(baseUrl + `userLogin`, obj)
             if (res.data) {
                 sessionStorage.setItem("userData", JSON.stringify(res.data))
                 navigate('/timesheet');
             } else {
                 alert("Invalid Credentials");
             }
+
+          } catch(error){
+            Swal.fire("Invalid Credentials");
+          }
         }
     }
 const handleClick =()=>{

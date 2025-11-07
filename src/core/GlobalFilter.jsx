@@ -30,10 +30,15 @@ function GlobalFilter({ onFilterChange, onMonthChange, onChange, statusList=[]})
         label="Select Month"
         type="month"
         size="small"
+        
   
         onChange={(e) => onMonthChange(e.target.value)}
 
   sx={{
+    "& input": {
+          color: "transparent",  
+          caretColor: "transparent",
+        },
     width: 200,
     '& .MuiOutlinedInput-root': {
       borderRadius: 2,

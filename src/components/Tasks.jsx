@@ -22,6 +22,7 @@ import "../styles.scss";
 
 function Tasks() {
   const userData = JSON.parse(sessionStorage.getItem("userData"));
+   const loginData = JSON.parse(sessionStorage.getItem("userData"));
 
 
 
@@ -53,7 +54,7 @@ const [exceptName, setExceptName] = useState(false);
   const [editFlag, setEditFlag] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [ taskPayload, setTaskPayload] = useState( {
-          "taskUId" : 3,
+          "taskUId" : loginData.userId,
           "monthYear" : new Date().toISOString().slice(0, 7)
         })
   const [selectedMonth, setSelectedMonth] = useState("2025-11");
@@ -74,7 +75,7 @@ const [exceptName, setExceptName] = useState(false);
   
     if (selectedMonth) {
         const payload = {
-          "taskUId" : 3,
+          "taskUId" : loginData.userId,
           "monthYear" : selectedMonth,
         }
       setTaskPayload(payload)
@@ -310,9 +311,21 @@ const fetchTasksByMonth = async (month) => {
       confirmButtonText: "Delete",
       successMsg: "Deleted",
       onConfirm: async () => {
-        await deleteApi({ url: timesheetService.delete.deleteTask, data: { actionMode: "Delete" , taskId: data.taskId } })
+
+        try{
+       const res = await deleteApi({ url: timesheetService.delete.deleteTask, data: { actionMode: "Delete" , taskId: data.taskId } })
         fetchTasksData();
         setShowModal(false);
+        }
+        catch(error){
+
+          if(response.error){
+
+            Swal.fire("Unable to Delete Task");
+
+          }
+
+        }
       },
     });
   }

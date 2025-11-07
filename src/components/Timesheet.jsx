@@ -1,15 +1,18 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import MainHeader from './MainHeader'
+import LandingPage from './LandingPage'
 
 function Timesheet() {
     return (
         <main>
             <section>
                 <header>
-                    <MainHeader />
+                    
+                    <LandingPage />
                 </header>
                 <div>
+                    
                     <Outlet />
                 </div>
                 <footer>
